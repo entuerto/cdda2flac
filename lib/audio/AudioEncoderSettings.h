@@ -20,7 +20,7 @@
 #ifndef AUDIO_AUDIOENCODERSETTINGS_H
 #define AUDIO_AUDIOENCODERSETTINGS_H
 
-#include <orion/Mem-utils.h>
+#include <orion/MemoryUtils.h>
 #include <orion/NonCopyable.h>
 #include <audio/Common.h>
 

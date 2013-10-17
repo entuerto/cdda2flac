@@ -20,7 +20,7 @@
 #ifndef AUDIO_AUDIOMETADATA_H
 #define AUDIO_AUDIOMETADATA_H
 
-#include <orion/Mem-utils.h>
+#include <orion/MemoryUtils.h>
 #include <orion/NonCopyable.h>
 #include <audio/Common.h>
 

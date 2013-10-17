@@ -19,7 +19,7 @@
 
 #include <orion/logging/LogEndRecord.h>
 
-#include <orion/Date-utils.h>
+#include <orion/DateUtils.h>
 
 namespace orion
 {

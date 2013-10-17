@@ -23,7 +23,7 @@
 #define ORION_LOGGING_OUTPUTHANDLER_H
 
 #include <orion/logging/IFormatter.h>
-#include <orion/Mem-utils.h>
+#include <orion/MemoryUtils.h>
 #include <iosfwd>
 #include <vector>
 

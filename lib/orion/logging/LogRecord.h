@@ -23,7 +23,7 @@
 #include <stdint.h>
 
 #include <orion/logging/Logger.h>
-#include <orion/Mem-utils.h>
+#include <orion/MemoryUtils.h>
 
 namespace orion
 {

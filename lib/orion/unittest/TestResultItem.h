@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-#include <orion/Mem-utils.h>
+#include <orion/MemoryUtils.h>
 
 namespace orion
 {

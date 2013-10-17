@@ -47,7 +47,7 @@ audio_sources = ['lib/audio/CddaException.cpp',
                  'lib/audio/cdio/CdTextImpl.cpp']
 
 orion_sources = ['lib/orion/ArgumentExceptions.cpp',
-                 'lib/orion/Date-utils.cpp',
+                 'lib/orion/DateUtils.cpp',
                  'lib/orion/Exception.cpp',
                  'lib/orion/NotImplementedException.cpp',
                  'lib/orion/StringUtils.cpp',

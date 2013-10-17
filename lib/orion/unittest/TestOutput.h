@@ -20,7 +20,7 @@
 #ifndef ORION_UNITTEST_TESTOUTPUT_H
 #define ORION_UNITTEST_TESTOUTPUT_H
 
-#include <orion/Mem-utils.h>
+#include <orion/MemoryUtils.h>
 #include <orion/unittest/TestResult.h>
 
 namespace orion

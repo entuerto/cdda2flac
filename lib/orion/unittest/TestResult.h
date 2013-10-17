@@ -23,7 +23,7 @@
 
 #include <string>
 
-#include <orion/Mem-utils.h>
+#include <orion/MemoryUtils.h>
 #include <orion/Timer.h>
 #include <orion/unittest/TestResultItem.h>
 

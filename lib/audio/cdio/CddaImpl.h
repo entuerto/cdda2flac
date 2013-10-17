@@ -20,7 +20,7 @@
 #ifndef AUDIO_CDDAIMPL_H
 #define AUDIO_CDDAIMPL_H
 
-#include <orion/Mem-utils.h>
+#include <orion/MemoryUtils.h>
 #include <orion/NonCopyable.h>
 #include <audio/Common.h>
 #include <audio/Cdda.h>

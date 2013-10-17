@@ -17,8 +17,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA 02110-1301, USA.
 
-#ifndef ORION_MEM_UTILS_H
-#define ORION_MEM_UTILS_H
+#ifndef ORION_MEMORY_UTILS_H
+#define ORION_MEMORY_UTILS_H
 
 #include <memory>
 

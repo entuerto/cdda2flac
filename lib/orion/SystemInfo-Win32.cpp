@@ -17,7 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA 02110-1301, USA.
 
-#include "SystemInfo.h"
+#include <orion/SystemInfo.h>
 
 #define _WIN32_WINNT 0x0500
 #include <windows.h>
