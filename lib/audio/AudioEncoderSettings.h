@@ -20,9 +20,11 @@
 #ifndef AUDIO_AUDIOENCODERSETTINGS_H
 #define AUDIO_AUDIOENCODERSETTINGS_H
 
+#include <cstdint>
+#include <string>
+
 #include <orion/MemoryUtils.h>
 #include <orion/NonCopyable.h>
-#include <audio/Common.h>
 
 namespace audio
 {
@@ -113,7 +115,7 @@ public:
 private:
    class Private;
 
-   const std::auto_ptr<Private> _private;
+   const std::unique_ptr<Private> _private;
 };
 
 } // end of namespace

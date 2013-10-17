@@ -23,6 +23,7 @@
 #define ORION_LOGGING_LOGGER_H
 
 #include <functional>
+
 #include <orion/logging/OutputHandler.h>
 
 namespace orion

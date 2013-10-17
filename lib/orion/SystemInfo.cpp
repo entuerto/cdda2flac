@@ -19,9 +19,9 @@
 
 #include "SystemInfo.h"
 
-//#include <sys/sysinfo.h>
 #include <unistd.h>
 #include <sys/utsname.h>
+
 #include <fstream>
 #include <sstream>
 

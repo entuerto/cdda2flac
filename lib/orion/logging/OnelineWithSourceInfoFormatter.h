@@ -22,9 +22,8 @@
 
 #include <string>
 
-#include <orion/logging/IFormatter.h>
 #include <orion/NonCopyable.h>
-
+#include <orion/logging/IFormatter.h>
 
 namespace orion
 {

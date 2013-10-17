@@ -19,9 +19,10 @@
  * MA 02110-1301, USA.
  */
 
-#include <orion/logging/StreamOutputHandler.h>
-#include <orion/logging/IFormatter.h>
 #include <iostream>
+
+#include <orion/logging/IFormatter.h>
+#include <orion/logging/StreamOutputHandler.h>
 
 namespace orion
 {

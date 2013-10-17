@@ -20,7 +20,7 @@
 #ifndef ORION_EXCEPTION_H
 #define ORION_EXCEPTION_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 #ifndef THROW_EXCEPTION

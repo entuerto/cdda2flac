@@ -24,7 +24,6 @@
 #include <string>
 
 #include <orion/MemoryUtils.h>
-#include <audio/Common.h>
 
 namespace audio
 {

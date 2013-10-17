@@ -4,9 +4,10 @@
 #ifndef ORION_STRINGUTILS_H
 #define ORION_STRINGUTILS_H
 
-#include <stdint.h>
-#include <sstream>
+#include <cstdint>
+
 #include <list>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <typeinfo>

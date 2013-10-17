@@ -20,8 +20,10 @@
 #ifndef AUDIO_AUDIOENCODEREXCEPTION_H
 #define AUDIO_AUDIOENCODEREXCEPTION_H
 
+#include <cstdint>
+#include <string>
+
 #include <orion/Exception.h>
-#include <audio/Common.h>
 
 namespace audio
 {

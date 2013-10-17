@@ -19,6 +19,7 @@
 
 #include <audio/AudioEncoderSettings.h>
 
+#include <cstdint>
 #include <string>
 
 namespace audio

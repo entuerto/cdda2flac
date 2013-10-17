@@ -22,7 +22,6 @@
 #include <audio/cdio/CddaReaderImpl.h>
 #include <audio/cdio/ParanoiaReaderImpl.h>
 
-
 namespace audio
 {
 

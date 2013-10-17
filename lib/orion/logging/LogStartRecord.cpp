@@ -18,6 +18,7 @@
 // MA 02110-1301, USA.
 
 #include <orion/logging/LogStartRecord.h>
+
 #include <orion/DateUtils.h>
 
 namespace orion

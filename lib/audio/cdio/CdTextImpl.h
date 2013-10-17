@@ -20,11 +20,10 @@
 #ifndef AUDIO_CDTEXTIMPL_H
 #define AUDIO_CDTEXTIMPL_H
 
-#include <orion/NonCopyable.h>
-#include <audio/Common.h>
-#include <audio/CdText.h>
-
 #include <cdio/cdtext.h>
+
+#include <orion/NonCopyable.h>
+#include <audio/CdText.h>
 
 namespace audio
 {

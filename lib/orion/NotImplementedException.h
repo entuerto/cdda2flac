@@ -20,8 +20,9 @@
 #ifndef ORION_NOTIMPLEMENTEDEXCEPTION_H
 #define ORION_NOTIMPLEMENTEDEXCEPTION_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
+
 #include <orion/Exception.h>
 
 namespace orion

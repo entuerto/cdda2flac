@@ -19,8 +19,8 @@
 
 #include <string>
 
-#include <orion/logging/LogRecord.h>
 #include <orion/DateUtils.h>
+#include <orion/logging/LogRecord.h>
 
 namespace orion
 {

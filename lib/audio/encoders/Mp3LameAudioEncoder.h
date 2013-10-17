@@ -22,8 +22,9 @@
 #define AUDIO_MP3LAMEAUDIOENCODER_H
 
 //include files
+#include <string>
+
 #include <orion/NonCopyable.h>
-#include <audio/Common.h>
 #include <audio/AudioEncoder.h>
 
 #include <lame/lame.h>

@@ -17,7 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA 02110-1301, USA.
 
-#include "CddaReaderImpl.h"
+#include <audio/cdio/CddaReaderImpl.h>
 
 #include <cdio/cdio.h>
 #include <cdio/cd_types.h>

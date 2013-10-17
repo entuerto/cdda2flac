@@ -21,8 +21,9 @@
 #ifndef ORION_UNITTEST_TESTSTDOUTPUT_H
 #define ORION_UNITTEST_TESTSTDOUTPUT_H
 
-#include <orion/unittest/TestOutput.h>
 #include <ostream>
+
+#include <orion/unittest/TestOutput.h>
 
 namespace orion
 {

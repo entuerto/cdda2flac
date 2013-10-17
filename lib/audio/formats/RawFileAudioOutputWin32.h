@@ -21,8 +21,9 @@
 #define AUDIO_RAWFILEAUDIOOUTPUTWIN32_H
 
 //include files
+#include <string>
+
 #include <orion/NonCopyable.h>
-#include <audio/Common.h>
 #include <audio/AudioOutput.h>
 
 #include <windows.h>

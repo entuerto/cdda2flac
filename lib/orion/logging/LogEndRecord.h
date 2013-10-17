@@ -20,7 +20,7 @@
 #ifndef ORION_LOGGING_LOGENDRECORD_H
 #define ORION_LOGGING_LOGENDRECORD_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 #include <orion/logging/LogRecord.h>

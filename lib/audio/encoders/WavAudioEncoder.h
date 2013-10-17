@@ -21,8 +21,9 @@
 #define AUDIO_WAVAUDIOENCODER_H
 
 //include files
+#include <string>
+
 #include <orion/NonCopyable.h>
-#include <audio/Common.h>
 #include <audio/AudioEncoder.h>
 
 namespace audio

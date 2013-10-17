@@ -21,15 +21,15 @@
 
 #include <orion/logging/Logger.h>
 
+#include <iostream>
+#include <sstream>
+
+#include <orion/SystemInfo.h>
 #include <orion/logging/LogRecord.h>
 #include <orion/logging/LogExceptionRecord.h>
 #include <orion/logging/LogEndRecord.h>
 #include <orion/logging/LogStartRecord.h>
 #include <orion/logging/LogSystemInfoRecord.h>
-#include <orion/SystemInfo.h>
-
-#include <iostream>
-#include <sstream>
 
 namespace orion
 {

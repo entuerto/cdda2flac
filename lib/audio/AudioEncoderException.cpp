@@ -17,7 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA 02110-1301, USA.
 
-#include "AudioEncoderException.h"
+#include <audio/AudioEncoderException.h>
 
 using namespace orion;
 

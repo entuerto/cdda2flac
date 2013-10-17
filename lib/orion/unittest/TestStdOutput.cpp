@@ -18,10 +18,11 @@
 // MA 02110-1301, USA.
 //
 
-#include <orion/unittest/TestStdOutput.h>
-#include <orion/unittest/Test.h>
-#include <orion/unittest/TestResultItem.h>
 #include <iomanip>
+
+#include <orion/unittest/Test.h>
+#include <orion/unittest/TestStdOutput.h>
+#include <orion/unittest/TestResultItem.h>
 
 namespace orion
 {

@@ -31,7 +31,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA 02110-1301, USA.
 
-#include "Mp3LameAudioEncoder.h"
+#include <audio/encoders/Mp3LameAudioEncoder.h>
 
 #include <orion/Exception.h>
 #include <audio/AudioOutput.h>

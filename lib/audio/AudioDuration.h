@@ -22,7 +22,7 @@
 #ifndef AUDIO_AUDIODURATION_H
 #define AUDIO_AUDIODURATION_H
 
-#include <audio/Common.h>
+#include <cstdint>
 
 namespace audio
 {

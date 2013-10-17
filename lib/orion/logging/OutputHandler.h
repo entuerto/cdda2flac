@@ -22,10 +22,11 @@
 #ifndef ORION_LOGGING_OUTPUTHANDLER_H
 #define ORION_LOGGING_OUTPUTHANDLER_H
 
-#include <orion/logging/IFormatter.h>
-#include <orion/MemoryUtils.h>
 #include <iosfwd>
 #include <vector>
+
+#include <orion/MemoryUtils.h>
+#include <orion/logging/IFormatter.h>
 
 namespace orion
 {

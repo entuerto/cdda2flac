@@ -20,9 +20,10 @@
 #ifndef AUDIO_AUDIOMETADATA_H
 #define AUDIO_AUDIOMETADATA_H
 
+#include <string>
+
 #include <orion/MemoryUtils.h>
 #include <orion/NonCopyable.h>
-#include <audio/Common.h>
 
 namespace audio
 {

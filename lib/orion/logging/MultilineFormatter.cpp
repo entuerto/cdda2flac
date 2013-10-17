@@ -19,11 +19,11 @@
 
 #include <orion/logging/MultilineFormatter.h>
 
+#include <sstream> 
+
 #include <orion/logging/Logger.h>
 #include <orion/logging/LogRecord.h>
 #include <orion/logging/LogExceptionRecord.h>
-
-#include <sstream> 
 
 namespace orion
 {

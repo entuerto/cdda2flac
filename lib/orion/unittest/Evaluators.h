@@ -20,8 +20,9 @@
 #ifndef ORION_UNITTEST_EVALUATORS_H
 #define ORION_UNITTEST_EVALUATORS_H
 
-#include <orion/unittest/TestResult.h>
 #include <string>
+
+#include <orion/unittest/TestResult.h>
 
 namespace orion
 {

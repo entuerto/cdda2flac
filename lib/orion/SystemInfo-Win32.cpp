@@ -26,7 +26,6 @@
 
 #include <psapi.h>
 
-
 namespace orion
 {
 namespace systeminfo

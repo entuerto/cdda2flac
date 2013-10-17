@@ -22,14 +22,13 @@
 #ifndef AUDIO_CDDATRACKIMPL_H
 #define AUDIO_CDDATRACKIMPL_H
 
-#include <orion/NonCopyable.h>
-#include <audio/Common.h>
-#include <audio/CddaTrack.h>
-#include <audio/CdText.h>
-
 #include <cdio/cdio.h>
 #include <cdio/cd_types.h>
 #include <cdio/paranoia/cdda.h>
+
+#include <orion/NonCopyable.h>
+#include <audio/CddaTrack.h>
+#include <audio/CdText.h>
 
 namespace audio
 {

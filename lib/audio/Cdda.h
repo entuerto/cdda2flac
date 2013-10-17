@@ -21,11 +21,12 @@
 #ifndef AUDIO_CDDA_H
 #define AUDIO_CDDA_H
 
+#include <cstdint>
 #include <ostream>
+#include <string>
 #include <list>
 
 #include <orion/MemoryUtils.h>
-#include <audio/Common.h>
 
 namespace audio
 {

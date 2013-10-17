@@ -20,8 +20,9 @@
 #ifndef ORION_ARGUMENTEXCEPTIONS_H
 #define ORION_ARGUMENTEXCEPTIONS_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
+
 #include <orion/Exception.h>
 
 #ifndef THROW_IF_NULL

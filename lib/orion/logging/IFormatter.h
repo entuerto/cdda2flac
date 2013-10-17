@@ -20,8 +20,8 @@
 #ifndef ORION_LOGGING_IFORMATTER_H
 #define ORION_LOGGING_IFORMATTER_H
 
-#include <orion/MemoryUtils.h>
 #include <string>
+#include <orion/MemoryUtils.h>
 
 namespace orion
 {

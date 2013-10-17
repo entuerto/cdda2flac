@@ -20,12 +20,11 @@
 #ifndef ORION_LOGGING_MULTILINEFORMATTER_H
 #define ORION_LOGGING_MULTILINEFORMATTER_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
-#include <orion/logging/IFormatter.h>
 #include <orion/NonCopyable.h>
-
+#include <orion/logging/IFormatter.h>
 
 namespace orion
 {

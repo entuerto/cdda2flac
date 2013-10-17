@@ -20,10 +20,10 @@
 #ifndef AUDIO_AUDIOENCODER_H
 #define AUDIO_AUDIOENCODER_H
 
+#include <cstdint>
 #include <string>
 
 #include <orion/MemoryUtils.h>
-#include <audio/Common.h>
 #include <audio/AudioOutput.h>
 #include <audio/AudioEncoderSettings.h>
 #include <audio/AudioMetaData.h>

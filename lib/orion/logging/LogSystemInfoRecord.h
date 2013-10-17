@@ -20,12 +20,11 @@
 #ifndef ORION_LOGGING_LOGSYSTEMINFORECORD_H
 #define ORION_LOGGING_LOGSYSTEMINFORECORD_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 #include <orion/logging/Logger.h>
 #include <orion/logging/LogRecord.h>
-
 
 namespace orion
 {

@@ -21,7 +21,6 @@
 #define AUDIO_CDDAREADERIMPL_H
 
 #include <orion/NonCopyable.h>
-#include <audio/Common.h>
 #include <audio/AudioReader.h>
 #include <audio/Cdda.h>
 

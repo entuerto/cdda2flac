@@ -22,9 +22,10 @@
 #ifndef ORION_LOGGING_STREAMOUTPUTHANDLER_H
 #define ORION_LOGGING_STREAMOUTPUTHANDLER_H
 
-#include <orion/logging/OutputHandler.h>
-#include <orion/NonCopyable.h>
 #include <iosfwd>
+
+#include <orion/NonCopyable.h>
+#include <orion/logging/OutputHandler.h>
 
 namespace orion
 {

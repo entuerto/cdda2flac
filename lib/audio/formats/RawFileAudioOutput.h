@@ -24,8 +24,6 @@
 #include <cstdio>
 
 #include <orion/NonCopyable.h>
-
-#include <audio/Common.h>
 #include <audio/AudioOutput.h>
 
 namespace audio

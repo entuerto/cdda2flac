@@ -22,7 +22,8 @@
 #ifndef AUDIO_CDDAEXCEPTION_H
 #define AUDIO_CDDAEXCEPTION_H
 
-#include <audio/Common.h>
+#include <string>
+
 #include <orion/Exception.h>
 
 namespace audio

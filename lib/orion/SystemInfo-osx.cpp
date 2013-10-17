@@ -19,10 +19,11 @@
 
 #include <orion/SystemInfo.h>
 
-#include <stdlib.h>
 #include <unistd.h>
 #include <sys/utsname.h>
 #include <sys/sysctl.h>
+#include <cstdlib>
+
 #include <fstream>
 #include <sstream>
 

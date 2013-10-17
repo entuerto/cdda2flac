@@ -20,10 +20,10 @@
 #ifndef ORION_LOGGING_LOGRECORD_H
 #define ORION_LOGGING_LOGRECORD_H
 
-#include <stdint.h>
+#include <cstdint>
 
-#include <orion/logging/Logger.h>
 #include <orion/MemoryUtils.h>
+#include <orion/logging/Logger.h>
 
 namespace orion
 {

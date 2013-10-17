@@ -23,7 +23,6 @@
 #include <string>
 
 #include <orion/MemoryUtils.h>
-#include <audio/Common.h>
 #include <audio/Cdda.h>
 
 namespace audio
