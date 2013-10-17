@@ -31,7 +31,7 @@ namespace systeminfo
 
 typedef std::vector<std::string> ModuleList;
 
-std::vector<std::string> get_cpu_info();
+std::string get_cpu_info();
 
 std::string get_os_version();
 

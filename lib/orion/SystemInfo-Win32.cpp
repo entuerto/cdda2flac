@@ -25,8 +25,6 @@
 #include <process.h>
 
 #include <psapi.h>
-#include <sstream>
-#include <locale>
 
 
 namespace orion
@@ -63,83 +61,44 @@ void get_loaded_modules(unsigned long process_id, ModuleList& modules)
    CloseHandle(process_handle);
 }
 
-std::vector<std::string> get_cpu_info()
+std::string get_cpu_info()
 {
-                             // HARDWARE\DESCRIPTION\System\CentralProcessor contient une
-                             // sous-clé pour chaque CPU, normalement nommées "0", "1", ...
-                             // Le nom du CPU est donné par les valeurs
-                             // ProcessorNameString, Identifier et/ou ~MHz de ces sous-clés.
-                             // On produit ici une chaîne qui contient le nom de tous les CPUS,
-                             // séparés par "; ".
-   HKEY proc_key;
-   if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-                    "HARDWARE\\DESCRIPTION\\System\\CentralProcessor",
-                    0, KEY_ENUMERATE_SUB_KEYS, &proc_key) != ERROR_SUCCESS) {
-      return std::vector<std::string>();
-   }
+   DWORD type = REG_SZ;
+   HKEY hKey = nullptr;
+   const uint32_t max_length = 4096;
 
-   DWORD cpu_key_index = 0;
-   char  cpu_key_name[16];
-   DWORD cpu_key_nameSize = sizeof(cpu_key_name);
-   _FILETIME dummy;
+   DWORD length = max_length;
+   char  value[max_length];
+   ZeroMemory(value, max_length);
 
-   std::vector<std::string> cpus;
-   std::ostringstream cpu_name;
+   const char* keyToOpen = "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0";
+   const char* valueToFind = "ProcessorNameString";
 
-   while (RegEnumKeyEx(proc_key,
-                       cpu_key_index,
-                       cpu_key_name,
-                       &cpu_key_nameSize,
-                       NULL, NULL, NULL, &dummy) == ERROR_SUCCESS) {
+   RegOpenKeyEx(HKEY_LOCAL_MACHINE, keyToOpen, 0, KEY_READ, &hKey);
+   RegQueryValueEx(hKey, valueToFind, NULL, &type, (LPBYTE)&value, &length);
+   RegCloseKey(hKey);
 
-      cpu_name << "CPU "
-               << cpu_key_name
-               << ": ";
+   std::string cpuName = value;
 
-      HKEY cpu_key;
-      if (RegOpenKeyEx(proc_key, cpu_key_name, 0, KEY_QUERY_VALUE, &cpu_key) == ERROR_SUCCESS) {
-         char cpuName[255];
-         DWORD cpu_value_size = sizeof(cpuName);
-         DWORD cpuValueType;
-         if (RegQueryValueEx(cpu_key, "ProcessorNameString", NULL, &cpuValueType, (LPBYTE)&cpuName, &cpu_value_size) == ERROR_SUCCESS
-             and cpuValueType == REG_SZ) {
-            cpu_name << cpuName;
-         } else {
-            cpu_value_size = sizeof(cpuName);
-            if (RegQueryValueEx(cpu_key, "Identifier", NULL, &cpuValueType, (LPBYTE)&cpuName, &cpu_value_size) == ERROR_SUCCESS
-                and cpuValueType == REG_SZ)
-               {
-               cpu_name << cpuName;
-               }
-            DWORD cpu_speed;
-            cpu_value_size = sizeof(cpu_speed);
-            if (RegQueryValueEx(cpu_key, "~MHz", NULL, &cpuValueType, (LPBYTE)&cpu_speed, &cpu_value_size) == ERROR_SUCCESS
-                and cpuValueType == REG_DWORD)
-               {
-               cpu_name << " "
-                        << cpu_speed
-                        << " MHz";
-               }
-         }
-         RegCloseKey(cpu_key);
+   SYSTEM_INFO sysinfo;
+   ZeroMemory(&sysinfo, sizeof(SYSTEM_INFO));
+   GetSystemInfo(&sysinfo);
 
-         cpus.push_back(cpu_name.str());
+   const uint64_t cpuThreadCount = sysinfo.dwNumberOfProcessors;
+   std::string cpuInfo = cpuName + " (" + std::to_string(cpuThreadCount);
 
-         cpu_name.str("");
-      }
-      cpu_key_index++;
-      cpu_key_nameSize = sizeof(cpu_key_name);
-   }
-   RegCloseKey(proc_key);
-   return cpus;
+   if (cpuThreadCount == 1)
+      cpuInfo.append(" thread)");
+   else
+      cpuInfo.append(" threads)");
+
+   return cpuInfo;
 }
 
 std::string get_os_version()
 {
    OSVERSIONINFOEX osvi;
-   SYSTEM_INFO si;
 
-   ZeroMemory(&si, sizeof(SYSTEM_INFO));
    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
 
    // Try calling GetVersionEx using the OSVERSIONINFOEX structure.
@@ -148,116 +107,60 @@ std::string get_os_version()
 
    bool os_version_info_ex = GetVersionEx((OSVERSIONINFO*) &osvi);
 
-   if (not os_version_info_ex) {
+   if (not os_version_info_ex) 
+   {
       osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
       if (not GetVersionEx((OSVERSIONINFO*) &osvi))
          return "";
    }
 
-   GetSystemInfo(&si);
+   if (osvi.dwMajorVersion    == 5 and 
+       osvi.dwMinorVersion    == 1 and
+       osvi.wServicePackMajor == 2 and
+       osvi.wServicePackMinor == 0)
+      return "Microsoft Windows XP, Service Pack 2";
 
-   std::ostringstream os_version;
+   if (osvi.dwMajorVersion    == 5 and 
+       osvi.dwMinorVersion    == 1 and
+       osvi.wServicePackMajor == 3 and
+       osvi.wServicePackMinor == 0)
+      return "Microsoft Windows XP, Service Pack 3";
 
-   switch (osvi.dwPlatformId)
-   {
-      // Test for the Windows NT product family.
-      case VER_PLATFORM_WIN32_NT:
-         // Test for the specific product.
-         if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0) {
-            if (osvi.wProductType == VER_NT_WORKSTATION)
-               os_version << "Windows Vista ";
-            else
-               os_version << "Windows Server \"Longhorn\" ";
-         }
+   if (osvi.dwMajorVersion    == 6 and 
+       osvi.dwMinorVersion    == 0 and
+       osvi.wServicePackMajor == 1 and
+       osvi.wServicePackMinor == 0)
+      return "Microsoft Windows Vista, Service Pack 1";
 
-         if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 2) {
-            if (GetSystemMetrics(SM_SERVERR2)) {
-               os_version << "Microsoft Windows Server 2003 \"R2\" ";
-            } else if(osvi.wProductType == VER_NT_WORKSTATION
-                      and si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64) {
-               os_version << "Microsoft Windows XP Professional x64 Edition ";
-            } else {
-               os_version << "Microsoft Windows Server 2003, ";
-            }
-         }
+   if (osvi.dwMajorVersion    == 6 and 
+       osvi.dwMinorVersion    == 0 and
+       osvi.wServicePackMajor == 2 and
+       osvi.wServicePackMinor == 0)
+      return "Microsoft Windows Vista, Service Pack 2";
 
-         if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1)
-            os_version << "Microsoft Windows XP ";
+   if (osvi.dwMajorVersion    == 6 and 
+       osvi.dwMinorVersion    == 0)
+      return "Microsoft Windows Vista";
 
-         if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0)
-            os_version << "Microsoft Windows 2000 ";
+   if (osvi.dwMajorVersion    == 6 and 
+       osvi.dwMinorVersion    == 1 and
+       osvi.wServicePackMajor == 1 and
+       osvi.wServicePackMinor == 0)
+      return "Microsoft Windows 7, Service Pack 1";
 
-         if (osvi.dwMajorVersion <= 4)
-            os_version << "Microsoft Windows NT ";
+   if (osvi.dwMajorVersion    == 6 and 
+       osvi.dwMinorVersion    == 1)
+      return "Microsoft Windows 7";
 
-         // Test for specific product on Windows NT 4.0 SP6 and later.
-         if (os_version_info_ex) {
-            // Test for the workstation type.
-            if (osvi.wProductType == VER_NT_WORKSTATION &&
-                si.wProcessorArchitecture!=PROCESSOR_ARCHITECTURE_AMD64) {
-               if (osvi.dwMajorVersion == 4)
-                  os_version << "Workstation 4.0 ";
-               else if(osvi.wSuiteMask & VER_SUITE_PERSONAL)
-                  os_version << "Home Edition ";
-               else
-                  os_version << "Professional ";
-            }
-         }
+   if (osvi.dwMajorVersion    == 6 and 
+       osvi.dwMinorVersion    == 2)
+      return "Microsoft Windows 8";
 
-         // Display service pack (if any) and build number.
-         if (osvi.dwMajorVersion == 4 &&
-             lstrcmpi(osvi.szCSDVersion, TEXT("Service Pack 6")) == 0) {
-            HKEY hKey;
-            LONG lRet;
+   if (osvi.dwMajorVersion    == 6 and 
+       osvi.dwMinorVersion    == 3)
+      return "Microsoft Windows 8.1";
 
-            // Test for SP6 versus SP6a.
-            lRet = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-                                TEXT("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Hotfix\\Q246009"),
-                                0, KEY_QUERY_VALUE, &hKey);
-            if (lRet == ERROR_SUCCESS)
-               os_version << "Service Pack 6a (Build "
-                          << (osvi.dwBuildNumber & 0xFFFF)
-                          << ")";
-            else { // Windows NT 4.0 prior to SP6a
-               os_version << osvi.szCSDVersion
-                          << " (Build "
-                          << (osvi.dwBuildNumber & 0xFFFF)
-                          << ")";
-            }
-
-            RegCloseKey( hKey );
-         }
-         else {// not Windows NT 4.0
-            os_version << osvi.szCSDVersion
-                       << " (Build "
-                       << (osvi.dwBuildNumber & 0xFFFF)
-                       << ")";
-         }
-         break;
-
-      // Test for the Windows Me/98/95.
-      case VER_PLATFORM_WIN32_WINDOWS:
-         if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 0) {
-            os_version << "Microsoft Windows 95 ";
-            if (osvi.szCSDVersion[1] == 'C' || osvi.szCSDVersion[1] == 'B')
-               os_version << "OSR2 ";
-         }
-         if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 10) {
-            os_version << "Microsoft Windows 98 ";
-            if (osvi.szCSDVersion[1] == 'A' || osvi.szCSDVersion[1] == 'B')
-               os_version << "SE ";
-         }
-
-         if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 90) {
-            os_version << "Microsoft Windows Millennium Edition";
-         }
-         break;
-
-      case VER_PLATFORM_WIN32s:
-         os_version << "Microsoft Win32s";
-         break;
-   }
-   return os_version.str();
+   return "Microsoft Windows";
 }
 
 std::string get_host_name()

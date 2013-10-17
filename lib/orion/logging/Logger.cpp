@@ -286,7 +286,7 @@ std::string DefaultInfo()
                << "  Host name:  " << systeminfo::get_host_name() << "\n"
                << "  Process ID: " << systeminfo::get_process_id() << "\n"
                << "  Sytem:      " << systeminfo::get_os_version() << "\n"
-               << "  CPU:        " << systeminfo::get_cpu_info().front() << "\n"
+               << "  CPU:        " << systeminfo::get_cpu_info() << "\n"
                << "\n"
                << "Program Information\n"
                << "  " << systeminfo::get_program_name() << "\n";

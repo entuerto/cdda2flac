@@ -38,17 +38,14 @@ void get_loaded_modules(unsigned long /* process_id */, ModuleList& /* modules *
 
 }
 
-std::vector<std::string> get_cpu_info()
+std::string get_cpu_info()
 {
-   std::vector<std::string> cpus;
-
    char buffer[100];
    size_t len = 100;
 
    sysctlbyname("machdep.cpu.brand_string", &buffer, &len, nullptr, 0);
 
-   cpus.push_back(buffer);
-   return cpus;
+   return buffer;
 }
 
 std::string get_os_version()
