@@ -1,6 +1,7 @@
 
 #include <audio/Cdda.h>
 #include <audio/AudioReader.h>
+#include <audio/CddaRipper.h>
 #include <audio/CddaTrack.h>
 #include <audio/CddaException.h>
 #include <audio/AudioDuration.h>
@@ -78,7 +79,7 @@ void setup_logger(std::fstream& file_stream)
    logger.output_handlers().push_back(file_handler);
 }
 
-void extract_trac(Cdda::SharedPtr cd, const std::string& enc_name)
+void extract_track(Cdda::SharedPtr cd, const std::string& enc_name)
 {
    std::cout << "\nExtracting track: 1"
              << std::endl;
@@ -106,6 +107,7 @@ void extract_trac(Cdda::SharedPtr cd, const std::string& enc_name)
       AudioEncoder::SharedPtr  encoder = AudioEncoder::create(enc_name, output);
       AudioReader::SharedPtr   reader  = AudioReader::create(cd, "raw");
 
+
       output->open("track1." + enc_name);
 
       AudioEncoderSettings::SharedPtr enc_settings = AudioEncoderSettings::create();
@@ -123,26 +125,14 @@ void extract_trac(Cdda::SharedPtr cd, const std::string& enc_name)
 
       encoder->setup(enc_settings, metadata, track->size());
 
-      uint8_t read_buffer[Cdda::FRAMESIZE_RAW];
+      CddaRipper::SharedPtr ripper = CddaRipper::create();
 
-      for (uint32_t cursor = track->first_sector(); cursor <= track->last_sector(); ++cursor) 
-      {
-         // read a sector
-         long sectors_read = reader->read(read_buffer, cursor, 1);
-
-         encoder->encode(reinterpret_cast<int8_t*>(read_buffer), sectors_read * Cdda::FRAMESIZE_RAW);
-      }
-      encoder->tear_down();
+      ripper->rip_track(track, reader, encoder, output); 
 
    }
    catch (CddaException& ae) 
    {
       LOG_EXCEPTION(ae);
-      return;
-   }
-   catch (AudioEncoderException& aee) 
-   {
-      LOG_EXCEPTION(aee);
       return;
    }
 
@@ -169,7 +159,7 @@ int main(int argc, char* argv[])
       cd->open();
 
       if (cd->is_open())
-         extract_trac(cd, enc_name);
+         extract_track(cd, enc_name);
 
       cd->close();
    } 

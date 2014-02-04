@@ -20,6 +20,7 @@
 #include "AudioEncoder.h"
 
 #include <audio/AudioOutput.h>
+#include <audio/encoders/FlacAudioEncoder.h>
 #include <audio/encoders/WavAudioEncoder.h>
 //#include <audio/encoders/OggVorbisAudioEncoder.h>
 //#include <audio/encoders/Mp3LameAudioEncoder.h>
@@ -43,6 +44,10 @@ AudioEncoder::SharedPtr AudioEncoder::create(const std::string& encoder, AudioOu
    if (encoder == "wav") 
    {
       return AudioEncoder::SharedPtr(new WavAudioEncoder(out));
+   } 
+   else if (encoder == "FLAC") 
+   {
+      return AudioEncoder::SharedPtr(new FlacAudioEncoder(out));
    }
 //   else if (encoder == "ogg-vorbis" or encoder == "ogg") 
 //   {

@@ -1,0 +1,42 @@
+================================================
+ Installation of the cdda2flac audio application
+================================================
+
+The instructions in this file should help you to build and install the
+cdda2flac audio application from source on your system.
+
+Dependencies
+============
+
+Before you start, make sure you have installed following libraries:
+
+ * GNU libcdio -- GNU Compact Disc Input and Control Library
+   http://www.gnu.org/software/libcdio
+
+ * FLAC -- A free, open source codec for lossless audio compression and decompression.
+   https://xiph.org/flac/
+
+ * Musicbrainz -- Client library for the community music metadatabase
+   http://musicbrainz.org/
+
+ * json-cpp -- JSON data format manipulation library
+   http://jsoncpp.sourceforge.net/
+
+Building
+========
+
+Once you have installed all dependencies, you can compile the
+library:
+
+   waf configure
+   waf
+
+To build and run the test suite use:
+
+   waf --rub-tests
+
+And to install the built library run (as root):
+
+   waf install
+
+

@@ -28,8 +28,9 @@ VERSION = str (major) + '.' + str (minor) + '.' + str (micro)
 top = '.'
 out = 'build'
 
-audio_sources = ['lib/audio/CddaException.cpp',
-                 'lib/audio/Cdda.cpp',
+audio_sources = ['lib/audio/Cdda.cpp',
+                 'lib/audio/CddaException.cpp',
+                 'lib/audio/CddaRipper.cpp',
                  'lib/audio/AudioReader.cpp',
                  'lib/audio/AudioOutput.cpp',
                  'lib/audio/AudioMetaData.cpp',
@@ -37,6 +38,7 @@ audio_sources = ['lib/audio/CddaException.cpp',
                  'lib/audio/AudioEncoderException.cpp',
                  'lib/audio/AudioEncoder.cpp',
                  'lib/audio/AudioDuration.cpp',
+                 'lib/audio/encoders/FlacAudioEncoder.cpp',
                  'lib/audio/encoders/WavAudioEncoder.cpp',
 #                 'lib/audio/encoders/OggVorbisAudioEncoder.cpp',
 #                 'lib/audio/encoders/Mp3LameAudioEncoder.cpp',
@@ -204,6 +206,9 @@ def configure(conf):
                   args = '--cflags --libs')
    cdio_paranoia_version = conf.check_cfg(modversion='libcdio_paranoia', uselib_store='LIBCDIO_PARANOIA')
 
+   # FLAC encoder
+   conf.check_cc(lib='FLAC', mandatory=True)
+
    # uuid
    if not is_win32:
       conf.check_cfg(package         = 'uuid',
@@ -309,15 +314,15 @@ def build(bld):
                    source    = audio_sources,
                    includes  = ['.', 'lib/'],
                    lib       = 'c++' if is_darwin else '',
-                   uselib    = ['LIBCDIO', 'LIBCDIO_CDDA', 'LIBCDIO_PARANOIA'],
+                   uselib    = ['LIBCDIO', 'LIBCDIO_CDDA', 'LIBCDIO_PARANOIA', 'FLAC'],
                    use       = ['Orion'])
 
-#   obj = bld.program(target    = 'cdda2flac',
-#                     features  = 'cxx cprogram',
-#                     source    = 'src/main.cpp',
-#                     includes  = '. src/ lib/',
-#                    uselib    = 'flac',
-#                     uselib_local = 'orion audio')
+   obj = bld.program(target    = 'cdda2flac',
+                     features  = 'cxx cprogram',
+                     source    = 'src/main.cpp',
+                     includes  = ['.', 'src/', 'lib/'],
+                     uselib    = 'flac',
+                     use       = ['Audio', 'Orion'])
 
    if is_win32:
       obj.lib = ['psapi', 'rpcrt4']

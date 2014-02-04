@@ -1,6 +1,6 @@
 // main.cpp
 //
-// Copyright 2009 tomas <tomasp@videotron.ca>
+// Copyright 2013 tomas <tomasp@videotron.ca>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,27 +17,86 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA 02110-1301, USA.
 
-#include <gtkmm.h>
+#include <getopt.h>
 #include <iostream>
 #include <fstream>
-#include <sstream>
 
-#if WIN32
-#include <process.h>
-#else
-#include <unistd.h>
-#endif
+#include <orion/Logging.h>
+#include <audio/Cdda.h>
+#include <audio/CddaException.h>
 
+using namespace orion;
+using namespace orion::logging;
+using namespace audio;
 
-#include <core/env.h>
-#include <nodus/Logging.h>
-#include <nodus/SystemInfo.h>
-#include <core/MainWindow.h>
+static struct option long_options[] =
+{
+    { "help",        no_argument,       0, 'h' },
+    { "json-output", no_argument,       0, 'j' },
+    { "no-metadata", no_argument,       0, 'n' },
+    { "track",       required_argument, 0, 't' },
+    { 0, 0, 0, 0 }
+};
 
-using namespace std;
-using namespace nodus;
-using namespace nodus::logging;
-using namespace mamut;
+struct OptionValues 
+{
+   bool metadata;
+   bool json_output;
+   int  compression_level;
+   int  chanels;
+   int  bits_per_sample;
+   int  sample_rate;
+};
+
+void usage()
+{
+   std::cout << "Usage: cdda2flac [options] \n"
+             << "Options: \n"
+             << "      -h, --help          Print this message and exit. \n"
+             << "      -t, --track         Choose a track to extract \n"
+             << "      -n, --no-metadata   Do not query for meta data \n"
+             << "      -j, --json-output   Output to json format \n"
+             << std::endl;
+}
+
+void init_options(OptionValues& option_values)
+{
+   option_values.metadata = true;
+   option_values.json_output = false;
+   option_values.compression_level = 5;
+   option_values.chanels = 2;
+   option_values.bits_per_sample = 16;
+   option_values.sample_rate = 44000;
+}
+
+bool parse_cmd_line(int argc, char* argv[], OptionValues& option_values)
+{
+   int opt;
+   int opt_index = 0;
+
+   while ((opt = getopt_long(argc, argv, "ht:nj", long_options, &opt_index)) != -1) 
+   {
+      switch (opt) 
+      {
+         case 'h':
+            usage();
+            return false;
+         case 't':
+            //track = orion::convert_to<int>(optarg);
+            break;
+         case 'n':
+            option_values.metadata = false;
+            break;
+         case 'j':
+            option_values.json_output = true;
+            break;
+         default:
+            usage();
+            return false;
+      }
+   }
+   return true;
+}
 
 void setup_logger(std::fstream& file_stream)
 {
@@ -51,78 +110,76 @@ void setup_logger(std::fstream& file_stream)
    logger.output_handlers().push_back(file_handler);
 }
 
-std::string log_header()
+void extract_tracks(Cdda::SharedPtr cd, const OptionValues& option_values)
 {
-   std::ostringstream stream_info;
+/*
+   FLAC__bool ok = true;
+   FLAC__StreamEncoderInitStatus init_status;
 
-   stream_info << "System Information\n"
-               << "  Name:       " << Glib::get_user_name() << " (" << Glib::get_user_name() << ")\n"
-               << "  Host name:  " << g_get_host_name() << "\n"
-               << "  Process ID: " << getpid() << "\n"
-               << "  Sytem:      " << get_os_version() << "\n"
-               << "  CPU:        " <<  get_cpu() << "\n"
-               << "\n"
-               << "Program Information\n"
-               << "  " << Glib::get_prgname() << "\n"
-               << "\n"
-               << "Setup Information\n"
-               << "  User:\n"
-               << "    Config dir: " << get_user_config_dir() << "\n"
-               << "    Data dir:   " << get_user_data_dir() << "\n"
-               << "    Plugin dir: " << get_user_plugins_dir() << "\n\n"
-               << "  System:\n"
-               << "    Config dir: " << get_system_config_dir() << "\n"
-               << "    Data dir:   " << get_system_data_dir() << "\n"
-               << "    Plugin dir: " << get_system_plugins_dir() << "\n";
+   // allocate the encoder 
+   FLAC__StreamEncoder* encoder = FLAC__stream_encoder_new();
 
-   return stream_info.str();
+   if (encoder == nullptr) 
+   {
+      // TODO: Change to exception
+      LOG(Error) << "ERROR: allocating encoder\n";
+      return;
+   }
+
+   if (not FLAC__stream_encoder_set_channels(encoder, option_values.chanels))
+   {
+      LOG(Error) << "ERROR: could not set channel count\n";
+      return;
+   }
+
+   if (not FLAC__stream_encoder_set_sample_rate(encoder, sample_rate))
+   {
+      LOG(Error) << "ERROR: could not set sample rate\n";
+      return;
+   }
+
+   if (not FLAC__stream_encoder_set_bits_per_sample(encoder, option_values.bits_per_sample))
+   {
+      LOG(Error) << "ERROR: could not set sample width\n";
+      return;
+   }
+*/
+   //FLAC__stream_encoder_set_verify(encoder, true);
+   //FLAC__stream_encoder_set_compression_level(encoder, option_values.compression_level);
+   //FLAC__stream_encoder_set_total_samples_estimate(encoder, total_samples);
+
+
 }
 
 int main (int argc, char** argv)
 {
-   // Help with uncaught exceptions in g++
-   std::set_terminate(__gnu_cxx::__verbose_terminate_handler);
+   OptionValues option_values;
 
-   Gtk::Main kit(argc, argv);
+   init_options(option_values);
 
-   Glib::set_application_name("mamut");
+   if (not parse_cmd_line(argc, argv, option_values))
+      return EXIT_FAILURE;
 
-   fstream fout("mamut.log", std::fstream::out | std::fstream::trunc);
+   std::fstream fout("cdda2flac.log", std::fstream::out | std::fstream::trunc);
    setup_logger(fout);
 
-   LOG_START(sigc::ptr_fun(&log_header));
+   LOG_START();
 
-   Glib::RefPtr<Gtk::Builder> builder;
-   try {
-      std::string filename = build_path_to_glade_file("MamutGui.glade");
+   Cdda::SharedPtr cd = Cdda::create();
 
-      LOG(Debug) << "Mamut main glade file: " << filename;
+   try 
+   {
+      cd->open();
 
-      builder = Gtk::Builder::create_from_file(filename);
+      if (cd->is_open())
+         extract_tracks(cd, option_values);
+
+      cd->close();
+   } 
+   catch (CddaException& ae) 
+   {
+      LOG_EXCEPTION(ae);
    }
-   catch (const Gtk::BuilderError& ex) {
-      LOG_EXCEPTION(ex);
-      return EXIT_FAILURE;
-   }
-   catch (Glib::FileError& fe) {
-      LOG_EXCEPTION(fe);
-      return EXIT_FAILURE;
-   }
-   catch (std::exception& e) {
-      LOG_EXCEPTION(e);
-      return EXIT_FAILURE;
-   }
-
-
-   MainWindow* main_window = NULL;
-
-   builder->get_widget_derived("MainWindow", main_window);
-
-   if (main_window != NULL) {
-      kit.run(*main_window);
-   }
-
-   delete main_window;
 
    LOG_END();
    return EXIT_SUCCESS;

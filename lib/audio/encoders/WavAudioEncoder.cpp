@@ -74,21 +74,21 @@ void WavAudioEncoder::setup(AudioEncoderSettings::SharedPtr settings, AudioMetaD
 
    uint8_t  data_id[4]          = {'d','a','t','a'};  // 'data'
 
-	_output->write(riff_id, 4);
-	_output->write((uint8_t*)&riff_size, 4);
-	_output->write(riff_type, 4);
+   _output->write(riff_id, 4);
+   _output->write((uint8_t*)&riff_size, 4);
+   _output->write(riff_type, 4);
 
    _output->write(fmt_id, 4);
-	_output->write((uint8_t*)&fmt_length, 4);
-	_output->write((uint8_t*)&fmt_format, 2);
-	_output->write((uint8_t*)&fmt_channels, 2);
-	_output->write((uint8_t*)&fmt_sampling_rate, 4);
+   _output->write((uint8_t*)&fmt_length, 4);
+   _output->write((uint8_t*)&fmt_format, 2);
+   _output->write((uint8_t*)&fmt_channels, 2);
+   _output->write((uint8_t*)&fmt_sampling_rate, 4);
    _output->write((uint8_t*)&fmt_data_rate, 4);
-	_output->write((uint8_t*)&fmt_block_align, 2);
-	_output->write((uint8_t*)&fmt_bits_per_sample, 2);
+   _output->write((uint8_t*)&fmt_block_align, 2);
+   _output->write((uint8_t*)&fmt_bits_per_sample, 2);
 
-	_output->write(data_id, 4);
-	_output->write((uint8_t*)&data_size, 4);
+   _output->write(data_id, 4);
+   _output->write((uint8_t*)&data_size, 4);
 }
 
 /*
