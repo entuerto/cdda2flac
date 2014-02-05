@@ -49,6 +49,18 @@ public:
    AudioEncoderProfile();
    virtual ~AudioEncoderProfile();
 
+   //! Profile name
+   std::string name() const;
+
+   //! Sets the profile name
+   void name(const std::string& value);
+
+   //! Encoder name
+   std::string encoder() const;
+
+   //! Sets the encoder name
+   void encoder(const std::string& value);
+
    //! Return the sample rate ex: 44100 hz
    uint32_t sample_rate() const;
 

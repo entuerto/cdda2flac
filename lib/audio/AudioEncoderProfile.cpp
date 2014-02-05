@@ -29,6 +29,8 @@ class AudioEncoderProfile::Private
 {
 public:
    Private() :
+      name("wav"),
+      encoder("wav"),
       sample_rate(44100),
       bits_per_sample(16),
       channels(2),
@@ -41,6 +43,8 @@ public:
       {}
 
 public:
+   std::string name;
+   std::string encoder;
    uint32_t sample_rate;
    uint32_t bits_per_sample;
    uint8_t  channels;
@@ -62,6 +66,38 @@ AudioEncoderProfile::AudioEncoderProfile() :
 
 AudioEncoderProfile::~AudioEncoderProfile()
 {
+}
+
+/*! 
+   Profile name
+ */
+std::string AudioEncoderProfile::name() const
+{
+   return _private->name;
+}
+
+/*! 
+   Sets the profile name
+ */
+void AudioEncoderProfile::name(const std::string& value) 
+{
+   _private->name = value;
+}
+
+/*! 
+   Encoder name
+ */
+std::string AudioEncoderProfile::encoder() const
+{
+   return _private->encoder;
+}
+
+/*! 
+   Sets the encoder name
+ */
+void AudioEncoderProfile::encoder(const std::string& value) 
+{
+   _private->encoder = value;
 }
 
 /*!
@@ -246,6 +282,8 @@ AudioEncoderProfile::SharedPtr AudioEncoderProfile::create(const std::string& na
 
    if (name == "FLAC")
    {
+      profile->name("FLAC");
+      profile->encoder("FLAC");
       profile->quality_level(5);
    }
 

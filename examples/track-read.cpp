@@ -103,13 +103,11 @@ void extract_track(Cdda::SharedPtr cd, const std::string& enc_name)
 
    try 
    {
-      AudioReader::SharedPtr   reader  = AudioReader::create(cd, "raw");
-
       AudioEncoderProfile::SharedPtr enc_profile = AudioEncoderProfile::create("FLAC");
 
-      CddaRipper::SharedPtr ripper = CddaRipper::create();
+      CddaRipper::SharedPtr ripper = CddaRipper::create(cd);
 
-      ripper->rip_track(track, reader, enc_profile); 
+      ripper->rip_track(track, enc_profile); 
 
    }
    catch (CddaException& ae) 

@@ -33,27 +33,28 @@ namespace audio
 
 /*!
 */
+CddaRipper::CddaRipper(Cdda::SharedPtr cd) :
+   _cd(cd)
+{
+}
+
+/*!
+*/
 CddaRipper::~CddaRipper()
 {
 }
 
 /*!
 */
-CddaRipper::CddaRipper()
-{
-}
-
-/*!
-*/
-void CddaRipper::rip_track(CddaTrack* track, AudioReader::SharedPtr reader,
-                                             AudioEncoderProfile::SharedPtr profile)
+void CddaRipper::rip_track(CddaTrack* track, AudioEncoderProfile::SharedPtr profile)
 {
    try 
    {
-      AudioOutput::SharedPtr   output  = AudioOutput::create("raw");
-      AudioEncoder::SharedPtr  encoder = AudioEncoder::create("FLAC", output);
+      AudioReader::SharedPtr  reader  = AudioReader::create(_cd, "raw");
+      AudioOutput::SharedPtr  output  = AudioOutput::create("raw");
+      AudioEncoder::SharedPtr encoder = AudioEncoder::create(profile->encoder(), output);
 
-      output->open("track1.flac");
+      output->open("track1." + profile->encoder());
 
       AudioMetaData::SharedPtr metadata = AudioMetaData::create();
 
@@ -82,7 +83,7 @@ void CddaRipper::rip_track(CddaTrack* track, AudioReader::SharedPtr reader,
 
 /*!
 */
-void CddaRipper::rip_disk(Cdda::SharedPtr cd)
+void CddaRipper::rip_disk(AudioEncoderProfile::SharedPtr profile)
 {
 /*
    try 
@@ -114,9 +115,9 @@ void CddaRipper::rip_disk(Cdda::SharedPtr cd)
 
 /*!
 */
-CddaRipper::SharedPtr CddaRipper::create() 
+CddaRipper::SharedPtr CddaRipper::create(Cdda::SharedPtr cd) 
 {
-   return CddaRipper::SharedPtr(new CddaRipper);
+   return CddaRipper::SharedPtr(new CddaRipper(cd));
 }
 
 } // namespace audio

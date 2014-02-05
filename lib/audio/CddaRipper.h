@@ -38,17 +38,19 @@ public:
    ~CddaRipper();
 
    //! Extracts a single track from a cd-rom
-   void rip_track(CddaTrack* track, AudioReader::SharedPtr reader,
-                                    AudioEncoderProfile::SharedPtr profile);
+   void rip_track(CddaTrack* track, AudioEncoderProfile::SharedPtr profile);
 
    //! Extracts a all the tracks from a cd-rom
-   void rip_disk(Cdda::SharedPtr cd);
+   void rip_disk(AudioEncoderProfile::SharedPtr profile);
 
 
-   static CddaRipper::SharedPtr create(); 
+   static CddaRipper::SharedPtr create(Cdda::SharedPtr cd); 
 
 protected:
-   CddaRipper();
+   CddaRipper(Cdda::SharedPtr cd);
+
+private:
+   Cdda::SharedPtr _cd;
 
 };
 
