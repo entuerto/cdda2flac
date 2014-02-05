@@ -217,4 +217,7 @@ pip-log.txt
 #waf
 .waf-*
 .lock-waf*
+waf-*
 
+#Doxygen
+docs/html
