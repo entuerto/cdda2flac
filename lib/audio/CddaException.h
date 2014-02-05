@@ -24,6 +24,7 @@
 
 #include <string>
 
+#include <orion/ErrorMacros.h>
 #include <orion/Exception.h>
 
 namespace audio

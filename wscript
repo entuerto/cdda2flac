@@ -48,28 +48,6 @@ audio_sources = ['lib/audio/Cdda.cpp',
                  'lib/audio/cdio/CddaImpl.cpp',
                  'lib/audio/cdio/CdTextImpl.cpp']
 
-orion_sources = ['lib/orion/ArgumentExceptions.cpp',
-                 'lib/orion/DateUtils.cpp',
-                 'lib/orion/Exception.cpp',
-                 'lib/orion/NotImplementedException.cpp',
-                 'lib/orion/StringUtils.cpp',
-                 'lib/orion/Timer.cpp',
-                 'lib/orion/logging/LogEndRecord.cpp',
-                 'lib/orion/logging/LogExceptionRecord.cpp',
-                 'lib/orion/logging/LogRecord.cpp',
-                 'lib/orion/logging/LogStartRecord.cpp',
-                 'lib/orion/logging/LogSystemInfoRecord.cpp',
-                 'lib/orion/logging/Logger.cpp',
-                 'lib/orion/logging/MultilineFormatter.cpp',
-                 'lib/orion/logging/OnelineFormatter.cpp',
-                 'lib/orion/logging/OnelineWithSourceInfoFormatter.cpp',
-                 'lib/orion/logging/OutputHandler.cpp',
-                 'lib/orion/logging/StreamOutputHandler.cpp',
-                 'lib/orion/unittest/Test.cpp',
-                 'lib/orion/unittest/TestResult.cpp',
-                 'lib/orion/unittest/TestResultItem.cpp',
-                 'lib/orion/unittest/TestStdOutput.cpp']
-
 sources = ['src/main.cpp'
           ]
 
@@ -94,6 +72,8 @@ def options(opt):
    opt.load('compiler_cxx')
    opt.load('gnu_dirs')
    opt.load('waf_unit_test')
+
+   is_win32 = sys.platform == "win32"  
 
    opt.parser.remove_option('--oldincludedir')
    opt.parser.remove_option('--localstatedir')
@@ -144,7 +124,13 @@ def options(opt):
                                dest    = 'warning_level')
 
 
-#   group = opt.add_option_group ('Optional Packages', '')
+   audio_group = opt.add_option_group ('Audio Packages', '')
+   audio_group.add_option ('--flac-path',
+                           action  = 'store',
+                           default = '/usr/local' if not is_win32 else 'E:/MinGWEnv/msys/1.0/local',
+                           help    = 'Specifies the path for the FLAC package.',
+                           dest    = 'flac_path')
+
 #   group.add_option ('--lame-path',
 #                     action  = 'store',
 #                     default = '/usr',
@@ -182,6 +168,14 @@ def configure(conf):
    # Load gnu_dirs here because we modify PREFIX for win32
    conf.load('gnu_dirs')
    
+   #liborion
+   conf.check_cfg(package = 'liborion-0.1',
+                  atleast_version = '0.1',
+                  uselib_store = 'LIBORION',
+                  mandatory = True,
+                  args = '--cflags --libs')
+   orion_version = conf.check_cfg(modversion='liborion-0.1', uselib_store='LIBORION')
+
    #libcdio
    conf.check_cfg(package = 'libcdio',
                   atleast_version = '0.81',
@@ -207,7 +201,13 @@ def configure(conf):
    cdio_paranoia_version = conf.check_cfg(modversion='libcdio_paranoia', uselib_store='LIBCDIO_PARANOIA')
 
    # FLAC encoder
-   conf.check_cc(lib='FLAC', mandatory=True)
+   have_flac = conf.check_cxx(header_name = 'FLAC/all.h',
+                              cxxflags = '-I' + os.path.join(Options.options.flac_path, 'include'),
+                              libpath = os.path.join(Options.options.flac_path, 'lib'),
+                              lib = 'FLAC', 
+                              uselib_store = "FLAC", 
+                              define_name = 'HAVE_FLAC_H', 
+                              mandatory = True)
 
    # uuid
    if not is_win32:
@@ -273,12 +273,15 @@ def configure(conf):
    _print(conf, "  Uuid version            : {0}".format(uuid_version if not is_win32 else 'Windows rpc'))
    _print(conf, "")
    _print(conf, "  Audio Incoders:")
-   _print(conf, "     flac                 : {0}".format('Yes' if conf.env['HAVE_FLAC'] else 'No'))
+   _print(conf, "     flac                 : {0}".format('Yes' if have_flac else 'No'))
    _print(conf, "")
    _print(conf, "  Audio backend:")
    _print(conf, "     cdio                 : {0}".format(cdio_version))
    _print(conf, "     cdio cdda            : {0}".format(cdio_cdda_version))
    _print(conf, "     cdio paranoia        : {0}".format(cdio_paranoia_version))
+   _print(conf, "")
+   _print(conf, "  Other Libs:")
+   _print(conf, "     orion                : {0}".format(orion_version))
 
 
 def build(bld):
@@ -287,70 +290,42 @@ def build(bld):
 
    if is_win32:
       audio_sources.append('lib/audio/formats/RawFileAudioOutputWin32.cpp')
-      orion_sources.append('lib/orion/SystemInfo-Win32.cpp')
-      orion_sources.append('lib/orion/Uuid-win32.cpp')
    elif is_darwin:
-      orion_sources.append('lib/orion/SystemInfo-osx.cpp')
       audio_sources.append('lib/audio/formats/RawFileAudioOutput.cpp')
-      orion_sources.append('lib/orion/Uuid.cpp')
    else:
       audio_sources.append('lib/audio/formats/RawFileAudioOutput.cpp')
-      orion_sources.append('lib/orion/SystemInfo.cpp')
-      orion_sources.append('lib/orion/Uuid.cpp')
    
-
-   obj = bld.shlib(target    = 'Orion',
-                   features  = 'cxx cxxshlib',
-                   source    = orion_sources,
-                   includes  = ['.', 'lib/'],
-                   lib       = 'c++' if is_darwin else '',
-                   uselib    = '')
-
-   if is_win32:
-      obj.lib = ['psapi', 'rpcrt4']
 
    obj = bld.shlib(target    = 'Audio',
                    features  = 'cxx cxxshlib',
                    source    = audio_sources,
                    includes  = ['.', 'lib/'],
                    lib       = 'c++' if is_darwin else '',
-                   uselib    = ['LIBCDIO', 'LIBCDIO_CDDA', 'LIBCDIO_PARANOIA', 'FLAC'],
-                   use       = ['Orion'])
+                   uselib    = ['LIBORION', 'LIBCDIO', 'LIBCDIO_CDDA', 'LIBCDIO_PARANOIA', 'FLAC'],
+                   use       = [])
 
    obj = bld.program(target    = 'cdda2flac',
                      features  = 'cxx cprogram',
                      source    = 'src/main.cpp',
                      includes  = ['.', 'src/', 'lib/'],
-                     uselib    = 'flac',
-                     use       = ['Audio', 'Orion'])
+                     uselib    = ['LIBORION','flac'],
+                     use       = ['Audio'])
 
    if is_win32:
       obj.lib = ['psapi', 'rpcrt4']
 
    # Tests
-   if Options.options.compile_tests or Options.options.run_tests:
-      bld.program(
-          target       = 'test-logger',
-          features     = 'cxx cprogram',
-          source       = ['tests/test-logger.cpp'],
-          includes     = ['.', 'tests/', 'lib/'],
-          use          = ['Orion'],
-          lib          = 'c++' if is_darwin else '',
-          install_path = None,
-          unit_test    = 1)
+   #if Options.options.compile_tests or Options.options.run_tests:
+   #   bld.program(
+   #       target       = 'test-logger',
+   #       features     = 'cxx cprogram',
+   #       source       = ['tests/test-logger.cpp'],
+   #       includes     = ['.', 'tests/', 'lib/'],
+   #       use          = ['LIBORION'],
+   #       lib          = 'c++' if is_darwin else '',
+   #       install_path = None,
+   #       unit_test    = 1)
 
-      bld.program(
-          target       = 'test-unittest',
-          features     = 'cxx cprogram',
-          source       = ['tests/test-unittest.cpp',
-                          'tests/unittest/ClassTest.cpp',
-                          'tests/unittest/ClassTestResult.cpp',
-                          'tests/unittest/EvalMacros.cpp'],
-          includes     = ['.', 'tests/', 'lib/'],
-          use          = ['Orion'],
-          lib          = 'c++' if is_darwin else '',
-          install_path = None,
-          unit_test    = 1)
 
    # Examples
    if Options.options.compile_examples:
@@ -359,7 +334,7 @@ def build(bld):
           features     = 'cxx cprogram',
           source       = ['examples/toc-read.cpp'],
           includes     = ['.', 'examples/', 'lib/'],
-          use          = ['Audio', 'Orion'],
+          use          = ['Audio', 'LIBORION'],
           lib          = 'c++' if is_darwin else '',
           install_path = None)
 
@@ -368,7 +343,7 @@ def build(bld):
           features     = 'cxx cprogram',
           source       = ['examples/read-cdtext.cpp'],
           includes     = ['.', 'examples/', 'lib/'],
-          use          = ['Audio', 'Orion'],
+          use          = ['Audio', 'LIBORION'],
           lib          = 'c++' if is_darwin else '',
           install_path = None)
 
@@ -377,7 +352,7 @@ def build(bld):
           features     = 'cxx cprogram',
           source       = ['examples/track-read.cpp'],
           includes     = ['.', 'examples/', 'lib/'],
-          use          = ['Audio', 'Orion'],
+          use          = ['Audio', 'LIBORION'],
           lib          = 'c++' if is_darwin else '',
           install_path = None)
 
@@ -385,9 +360,10 @@ def build(bld):
 
 
 def summary(ctx):
-   if Options.options.run_tests:
-      ctx.exec_command(os.path.join(ctx.out_dir, 'test-logger.exe'))
-      ctx.exec_command(os.path.join(ctx.out_dir, 'test-unittest.exe'))
+   pass
+   #if Options.options.run_tests:
+   #   ctx.exec_command(os.path.join(ctx.out_dir, 'test-logger.exe'))
+   #   ctx.exec_command(os.path.join(ctx.out_dir, 'test-unittest.exe'))
 
 
 def apidoc(ctx):
