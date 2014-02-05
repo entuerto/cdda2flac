@@ -24,6 +24,8 @@
 #include <sys/sysctl.h>
 #include <cstdlib>
 
+#include <mach-o/dyld.h>
+
 #include <fstream>
 #include <sstream>
 
@@ -79,7 +81,11 @@ int get_process_id()
 
 std::string get_program_name() 
 {
-   return "";
+   char buffer[1024];
+   uint32_t len = 1024;
+
+   _NSGetExecutablePath(buffer, &len);
+   return buffer;
 }
 
 } // namespace systeminfo
