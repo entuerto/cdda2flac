@@ -44,7 +44,7 @@ public:
 
    virtual std::string type() const;
 
-   virtual void setup(AudioEncoderSettings::SharedPtr settings, AudioMetaData::SharedPtr metadata, uint32_t data_size);
+   virtual void setup(AudioEncoderProfile::SharedPtr settings, AudioMetaData::SharedPtr metadata, uint32_t data_size);
 
    virtual int32_t encode(int8_t* data,  uint32_t len);
 
@@ -54,7 +54,7 @@ public:
 
 private:
    AudioOutput::SharedPtr _output;
-   AudioEncoderSettings::SharedPtr _settings;
+   AudioEncoderProfile::SharedPtr _profile;
 
    FLAC__StreamEncoder* _encoder;
 

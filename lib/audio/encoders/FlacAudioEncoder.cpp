@@ -21,7 +21,7 @@
 
 #include <audio/AudioOutput.h>
 #include <audio/AudioEncoderException.h>
-#include <audio/AudioEncoderSettings.h>
+#include <audio/AudioEncoderProfile.h>
 #include <audio/AudioMetaData.h>
 
 #include <cdio/sector.h>
@@ -51,7 +51,7 @@ static FLAC__StreamEncoderWriteStatus write_callback(const FLAC__StreamEncoder *
 FlacAudioEncoder::FlacAudioEncoder(AudioOutput::SharedPtr out) :
    AudioEncoder(),
    _output(out),
-   _settings(nullptr),
+   _profile(nullptr),
    _encoder(nullptr)
 {
 }
@@ -72,9 +72,9 @@ std::string FlacAudioEncoder::type() const
 
 /*
  */
-void FlacAudioEncoder::setup(AudioEncoderSettings::SharedPtr settings, AudioMetaData::SharedPtr /* metadata */, uint32_t data_size)
+void FlacAudioEncoder::setup(AudioEncoderProfile::SharedPtr settings, AudioMetaData::SharedPtr /* metadata */, uint32_t data_size)
 {
-   _settings = settings;
+   _profile = settings;
 
    // allocate the encoder 
    _encoder = FLAC__stream_encoder_new();
@@ -131,7 +131,7 @@ int32_t FlacAudioEncoder::encode(int8_t* data,  uint32_t len)
 {
    FLAC__int32 buffer[SAMPLES_BUF_SIZE];
 
-   int32_t channels =  _settings->channels(); 
+   int32_t channels =  _profile->channels(); 
    int32_t left_samples = len / channels; 
 
    while (left_samples > 0)

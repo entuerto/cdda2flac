@@ -1,4 +1,4 @@
-// AudioEncoderSettings.h
+// AudioEncoderProfile.h
 //
 // Copyright 2009 tomas <tomasp@videotron.ca>
 //
@@ -17,8 +17,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA 02110-1301, USA.
 
-#ifndef AUDIO_AUDIOENCODERSETTINGS_H
-#define AUDIO_AUDIOENCODERSETTINGS_H
+#ifndef AUDIO_AUDIOENCODERPROFILE_H
+#define AUDIO_AUDIOENCODERPROFILE_H
 
 #include <cstdint>
 #include <string>
@@ -35,20 +35,19 @@ enum EncodeMethod {
    QVBR   //!< Quality based variable bit rate
 };
 
-//! Settings of the audio encoder
+//! Profile for encoding audio 
 /*!
-   This class configures the audio encoder. By setting
-   the various properties the audio encoder will
-   encode the audio in various methods.
+   This class configures the audio encoder. The profile will
+   set the default properties for encoding audio.
  */
-class AudioEncoderSettings :
+class AudioEncoderProfile :
    orion::NonCopyable
 {
 public:
-   DECLARE_POINTERS(AudioEncoderSettings)
+   DECLARE_POINTERS(AudioEncoderProfile)
 
-   AudioEncoderSettings();
-   virtual ~AudioEncoderSettings();
+   AudioEncoderProfile();
+   virtual ~AudioEncoderProfile();
 
    //! Return the sample rate ex: 44100 hz
    uint32_t sample_rate() const;
@@ -108,7 +107,7 @@ public:
    void set_bitrates(int32_t min_bitrate, int32_t avg_bitrate, int32_t max_bitrate);
 
 
-   static SharedPtr create();
+   static SharedPtr create(const std::string& name);
 
    //! \todo Create advance options functions for audio encoders
 

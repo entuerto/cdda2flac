@@ -20,7 +20,7 @@
 #include <audio/encoders/WavAudioEncoder.h>
 
 #include <audio/AudioOutput.h>
-#include <audio/AudioEncoderSettings.h>
+#include <audio/AudioEncoderProfile.h>
 #include <audio/AudioMetaData.h>
 
 #include <cdio/sector.h>
@@ -56,7 +56,7 @@ std::string WavAudioEncoder::type() const
 
 /*
  */
-void WavAudioEncoder::setup(AudioEncoderSettings::SharedPtr settings, AudioMetaData::SharedPtr /* metadata */, uint32_t data_size)
+void WavAudioEncoder::setup(AudioEncoderProfile::SharedPtr profile, AudioMetaData::SharedPtr /* metadata */, uint32_t data_size)
 {
    uint8_t  riff_id[4]          = {'R','I','F','F'};  //'RIFF'
    uint32_t riff_size           = data_size + 44 - 8; // FileSize-8
@@ -65,12 +65,12 @@ void WavAudioEncoder::setup(AudioEncoderSettings::SharedPtr settings, AudioMetaD
    uint8_t  fmt_id[4]           = {'f','m','t',' '};  // 'FMT '
    uint32_t fmt_length          = 16;                 // 16
    uint16_t fmt_format          = 1;                       // 1 = WAVE_FORMAT_PCM
-   uint16_t fmt_channels        = settings->channels();    // 1 = mono, 2 = stereo
-   uint32_t fmt_sampling_rate   = settings->sample_rate(); // 44100
-   uint32_t fmt_data_rate       = settings->channels() *
-                                  settings->bits_per_sample() * settings->sample_rate() / 8;
-   uint16_t fmt_block_align     = settings->channels()* settings->bits_per_sample() / 8;
-   uint16_t fmt_bits_per_sample = settings->bits_per_sample();  // 8 or 16
+   uint16_t fmt_channels        = profile->channels();    // 1 = mono, 2 = stereo
+   uint32_t fmt_sampling_rate   = profile->sample_rate(); // 44100
+   uint32_t fmt_data_rate       = profile->channels() *
+                                  profile->bits_per_sample() * profile->sample_rate() / 8;
+   uint16_t fmt_block_align     = profile->channels()* profile->bits_per_sample() / 8;
+   uint16_t fmt_bits_per_sample = profile->bits_per_sample();  // 8 or 16
 
    uint8_t  data_id[4]          = {'d','a','t','a'};  // 'data'
 

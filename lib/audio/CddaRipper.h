@@ -22,8 +22,7 @@
 
 #include <orion/MemoryUtils.h>
 #include <audio/Cdda.h>
-#include <audio/AudioEncoder.h>
-#include <audio/AudioOutput.h>
+#include <audio/AudioEncoderProfile.h>
 #include <audio/AudioReader.h>
 
 namespace audio
@@ -40,8 +39,7 @@ public:
 
    //! Extracts a single track from a cd-rom
    void rip_track(CddaTrack* track, AudioReader::SharedPtr reader,
-                                    AudioEncoder::SharedPtr encoder,
-                                    AudioOutput::SharedPtr output);
+                                    AudioEncoderProfile::SharedPtr profile);
 
    //! Extracts a all the tracks from a cd-rom
    void rip_disk(Cdda::SharedPtr cd);

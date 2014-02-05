@@ -20,7 +20,9 @@
 #include <audio/CddaRipper.h>
 
 #include <orion/Logging.h>
+#include <audio/AudioEncoder.h>
 #include <audio/AudioEncoderException.h>
+#include <audio/AudioOutput.h>
 #include <audio/CddaTrack.h>
 
 using namespace orion;
@@ -44,11 +46,21 @@ CddaRipper::CddaRipper()
 /*!
 */
 void CddaRipper::rip_track(CddaTrack* track, AudioReader::SharedPtr reader,
-                                             AudioEncoder::SharedPtr encoder,
-                                             AudioOutput::SharedPtr output)
+                                             AudioEncoderProfile::SharedPtr profile)
 {
    try 
    {
+      AudioOutput::SharedPtr   output  = AudioOutput::create("raw");
+      AudioEncoder::SharedPtr  encoder = AudioEncoder::create("FLAC", output);
+
+      output->open("track1.flac");
+
+      AudioMetaData::SharedPtr metadata = AudioMetaData::create();
+
+      metadata->title("track number N");
+
+      encoder->setup(profile, metadata, track->size());
+
       uint8_t read_buffer[Cdda::FRAMESIZE_RAW];
 
       for (uint32_t cursor = track->first_sector(); cursor <= track->last_sector(); ++cursor) 

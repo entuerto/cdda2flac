@@ -1,4 +1,4 @@
-// AudioEncoderSettings.cpp
+// AudioEncoderProfile.cpp
 //
 // Copyright 2009 tomas <tomasp@videotron.ca>
 //
@@ -17,7 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA 02110-1301, USA.
 
-#include <audio/AudioEncoderSettings.h>
+#include <audio/AudioEncoderProfile.h>
 
 #include <cstdint>
 #include <string>
@@ -25,7 +25,7 @@
 namespace audio
 {
 
-class AudioEncoderSettings::Private
+class AudioEncoderProfile::Private
 {
 public:
    Private() :
@@ -53,21 +53,21 @@ public:
 
 };
 
-AudioEncoderSettings::AudioEncoderSettings() :
+AudioEncoderProfile::AudioEncoderProfile() :
    _private(new Private)
 {
 
 }
 
 
-AudioEncoderSettings::~AudioEncoderSettings()
+AudioEncoderProfile::~AudioEncoderProfile()
 {
 }
 
 /*!
    \return The sample rate ex: 44100 hz
  */
-uint32_t AudioEncoderSettings::sample_rate() const
+uint32_t AudioEncoderProfile::sample_rate() const
 {
    return _private->sample_rate;
 }
@@ -76,7 +76,7 @@ uint32_t AudioEncoderSettings::sample_rate() const
    Sets the sample rate. This will usaly be 44100.
    \param value new sample rate
  */
-void AudioEncoderSettings::sample_rate(uint32_t value)
+void AudioEncoderProfile::sample_rate(uint32_t value)
 {
    _private->sample_rate = value;
 }
@@ -84,7 +84,7 @@ void AudioEncoderSettings::sample_rate(uint32_t value)
 /*!
    \return The bits per sample ex: 16
  */
-uint32_t AudioEncoderSettings::bits_per_sample() const
+uint32_t AudioEncoderProfile::bits_per_sample() const
 {
    return _private->bits_per_sample;
 }
@@ -96,7 +96,7 @@ uint32_t AudioEncoderSettings::bits_per_sample() const
 
    \param value new bits per sample to use
  */
-void AudioEncoderSettings::bits_per_sample(uint32_t value)
+void AudioEncoderProfile::bits_per_sample(uint32_t value)
 {
    _private->bits_per_sample = value;
 }
@@ -104,7 +104,7 @@ void AudioEncoderSettings::bits_per_sample(uint32_t value)
 /*!
    \return The number of audio channels ex: 2 stereo, 1 mono
  */
-uint8_t AudioEncoderSettings::channels() const
+uint8_t AudioEncoderProfile::channels() const
 {
    return _private->channels;
 }
@@ -114,7 +114,7 @@ uint8_t AudioEncoderSettings::channels() const
 
    \param value new amount for channels 2 (stereo) or 1 (mono)
  */
-void AudioEncoderSettings::channels(uint8_t value)
+void AudioEncoderProfile::channels(uint8_t value)
 {
    _private->channels = value;
 }
@@ -122,7 +122,7 @@ void AudioEncoderSettings::channels(uint8_t value)
 /*!
    \return The quality level asked
  */
-int32_t AudioEncoderSettings::quality_level() const
+int32_t AudioEncoderProfile::quality_level() const
 {
    return _private->quality_level;
 }
@@ -132,7 +132,7 @@ int32_t AudioEncoderSettings::quality_level() const
 
    \param value quality level to use
  */
-void AudioEncoderSettings::quality_level(int32_t value)
+void AudioEncoderProfile::quality_level(int32_t value)
 {
    _private->quality_level = value;
 }
@@ -140,7 +140,7 @@ void AudioEncoderSettings::quality_level(int32_t value)
 /*!
    \return The audio mode ex: stereo, mono, etc.
  */
-std::string AudioEncoderSettings::audio_mode() const
+std::string AudioEncoderProfile::audio_mode() const
 {
    return _private->audio_mode;
 }
@@ -153,7 +153,7 @@ std::string AudioEncoderSettings::audio_mode() const
 
    \param value the new audio mode
  */
-void AudioEncoderSettings::audio_mode(const std::string& value)
+void AudioEncoderProfile::audio_mode(const std::string& value)
 {
    _private->audio_mode = value;
 }
@@ -161,7 +161,7 @@ void AudioEncoderSettings::audio_mode(const std::string& value)
 /*!
    \return The encoding method. ex: avg bitrate, constant bitrate, etc
  */
-EncodeMethod AudioEncoderSettings::encode_method() const
+EncodeMethod AudioEncoderProfile::encode_method() const
 {
    return _private->encode_method;
 }
@@ -171,7 +171,7 @@ EncodeMethod AudioEncoderSettings::encode_method() const
 
    \param value Methos to use
  */
-void AudioEncoderSettings::encode_method(EncodeMethod value)
+void AudioEncoderProfile::encode_method(EncodeMethod value)
 {
    _private->encode_method = value;
 }
@@ -179,7 +179,7 @@ void AudioEncoderSettings::encode_method(EncodeMethod value)
 /*!
    \return The minimum bitrate.
  */
-int32_t AudioEncoderSettings::min_bitrate() const
+int32_t AudioEncoderProfile::min_bitrate() const
 {
    return _private->min_bitrate;
 }
@@ -189,7 +189,7 @@ int32_t AudioEncoderSettings::min_bitrate() const
 
    \param value sets the minimum bitrate for the encoder
  */
-void AudioEncoderSettings::min_bitrate(int32_t value)
+void AudioEncoderProfile::min_bitrate(int32_t value)
 {
    _private->min_bitrate = value;
 }
@@ -197,7 +197,7 @@ void AudioEncoderSettings::min_bitrate(int32_t value)
 /*!
    \return the average bitrate.
  */
-int32_t AudioEncoderSettings::avg_bitrate() const
+int32_t AudioEncoderProfile::avg_bitrate() const
 {
    return _private->avg_bitrate;
 }
@@ -207,7 +207,7 @@ int32_t AudioEncoderSettings::avg_bitrate() const
 
    \param value sets the average bitrate for the encoder
  */
-void AudioEncoderSettings::avg_bitrate(int32_t value)
+void AudioEncoderProfile::avg_bitrate(int32_t value)
 {
    _private->avg_bitrate = value;
 }
@@ -215,7 +215,7 @@ void AudioEncoderSettings::avg_bitrate(int32_t value)
 /*!
    \return the maximum bitrate.
  */
-int32_t AudioEncoderSettings::max_bitrate() const
+int32_t AudioEncoderProfile::max_bitrate() const
 {
    return _private->max_bitrate;
 }
@@ -225,7 +225,7 @@ int32_t AudioEncoderSettings::max_bitrate() const
 
    \param value sets the maximum bitrate for the encoder
  */
-void AudioEncoderSettings::max_bitrate(int32_t value)
+void AudioEncoderProfile::max_bitrate(int32_t value)
 {
    _private->max_bitrate = value;
 }
@@ -233,16 +233,23 @@ void AudioEncoderSettings::max_bitrate(int32_t value)
 /*!
    Sets bitrates for the encoder.
  */
-void AudioEncoderSettings::set_bitrates(int32_t min_bitrate, int32_t avg_bitrate, int32_t max_bitrate)
+void AudioEncoderProfile::set_bitrates(int32_t min_bitrate, int32_t avg_bitrate, int32_t max_bitrate)
 {
    _private->min_bitrate = min_bitrate;
    _private->avg_bitrate = avg_bitrate;
    _private->max_bitrate = max_bitrate;
 }
 
-AudioEncoderSettings::SharedPtr AudioEncoderSettings::create()
+AudioEncoderProfile::SharedPtr AudioEncoderProfile::create(const std::string& name)
 {
-   return AudioEncoderSettings::SharedPtr(new AudioEncoderSettings);
+   AudioEncoderProfile::SharedPtr profile(new AudioEncoderProfile);
+
+   if (name == "FLAC")
+   {
+      profile->quality_level(5);
+   }
+
+   return profile;
 }
 
 } // end of namespace

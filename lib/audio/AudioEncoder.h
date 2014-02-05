@@ -25,7 +25,7 @@
 
 #include <orion/MemoryUtils.h>
 #include <audio/AudioOutput.h>
-#include <audio/AudioEncoderSettings.h>
+#include <audio/AudioEncoderProfile.h>
 #include <audio/AudioMetaData.h>
 
 namespace audio
@@ -56,7 +56,7 @@ public:
        \param metadata contains the tag information when encoding audio
        \param data_size size of the audio stream to encode
      */
-   virtual void setup(AudioEncoderSettings::SharedPtr settings, AudioMetaData::SharedPtr metadata, uint32_t data_size) = 0;
+   virtual void setup(AudioEncoderProfile::SharedPtr settings, AudioMetaData::SharedPtr metadata, uint32_t data_size) = 0;
 
    //! Encode some audio
    /*!

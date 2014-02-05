@@ -43,7 +43,7 @@ public:
 
    virtual std::string type() const;
 
-   virtual void setup(AudioEncoderSettings::SharedPtr settings, AudioMetaData::SharedPtr metadata, uint32_t data_size);
+   virtual void setup(AudioEncoderProfile::SharedPtr profile, AudioMetaData::SharedPtr metadata, uint32_t data_size);
 
    virtual int32_t encode(int8_t* data,  uint32_t len);
 

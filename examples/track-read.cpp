@@ -7,7 +7,7 @@
 #include <audio/AudioDuration.h>
 #include <audio/AudioEncoder.h>
 #include <audio/AudioEncoderException.h>
-#include <audio/AudioEncoderSettings.h>
+#include <audio/AudioEncoderProfile.h>
 #include <audio/AudioMetaData.h>
 #include <audio/AudioOutput.h>
 #include <orion/Logging.h>
@@ -103,31 +103,13 @@ void extract_track(Cdda::SharedPtr cd, const std::string& enc_name)
 
    try 
    {
-      AudioOutput::SharedPtr   output  = AudioOutput::create("raw");
-      AudioEncoder::SharedPtr  encoder = AudioEncoder::create(enc_name, output);
       AudioReader::SharedPtr   reader  = AudioReader::create(cd, "raw");
 
-
-      output->open("track1." + enc_name);
-
-      AudioEncoderSettings::SharedPtr enc_settings = AudioEncoderSettings::create();
-      AudioMetaData::SharedPtr metadata = AudioMetaData::create();
-
-      int32_t bitrate = 128;
-      if (enc_name == "ogg") 
-      {
-         bitrate *= 1000;
-      }
-
-      enc_settings->set_bitrates(bitrate, bitrate, bitrate);
-
-      metadata->title("track number N");
-
-      encoder->setup(enc_settings, metadata, track->size());
+      AudioEncoderProfile::SharedPtr enc_profile = AudioEncoderProfile::create("FLAC");
 
       CddaRipper::SharedPtr ripper = CddaRipper::create();
 
-      ripper->rip_track(track, reader, encoder, output); 
+      ripper->rip_track(track, reader, enc_profile); 
 
    }
    catch (CddaException& ae) 
