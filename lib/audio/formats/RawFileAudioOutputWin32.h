@@ -49,7 +49,7 @@ public:
 
     virtual bool open(const std::string& name);
 
-    virtual int32_t write(uint8_t* buffer, uint32_t len);
+    virtual int32_t write(const uint8_t* buffer, uint32_t len);
 
     virtual void flush();
 

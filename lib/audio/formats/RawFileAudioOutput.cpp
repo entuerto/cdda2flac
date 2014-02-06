@@ -69,7 +69,7 @@ bool RawFileAudioOutput::open(const std::string& name)
     \param buffer audio data to write
     \param len length of the audio in bytes
  */
-int32_t RawFileAudioOutput::write(uint8_t* buffer, uint32_t len)
+int32_t RawFileAudioOutput::write(const uint8_t* buffer, uint32_t len)
 {
    return std::fwrite(buffer, sizeof(uint8_t), len, _file_handle);
 }

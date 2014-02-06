@@ -47,7 +47,7 @@ public:
    virtual bool open(const std::string& name) =0;
 
    //! Write to the audio stream
-   virtual int32_t write(uint8_t* buffer, uint32_t len) =0;
+   virtual int32_t write(const uint8_t* buffer, uint32_t len) =0;
 
    //! Flush the stream
    virtual void flush() =0;
