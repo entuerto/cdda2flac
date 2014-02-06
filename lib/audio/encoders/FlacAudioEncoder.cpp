@@ -72,9 +72,9 @@ std::string FlacAudioEncoder::type() const
 
 /*
  */
-void FlacAudioEncoder::setup(AudioEncoderProfile::SharedPtr settings, AudioMetaData::SharedPtr /* metadata */, uint32_t data_size)
+void FlacAudioEncoder::setup(AudioEncoderProfile::SharedPtr profile, AudioMetaData::SharedPtr /* metadata */, uint32_t data_size)
 {
-   _profile = settings;
+   _profile = profile;
 
    // allocate the encoder 
    _encoder = FLAC__stream_encoder_new();
@@ -85,25 +85,25 @@ void FlacAudioEncoder::setup(AudioEncoderProfile::SharedPtr settings, AudioMetaD
       return;
    }
 
-   if (not FLAC__stream_encoder_set_channels(_encoder, settings->channels()))
+   if (not FLAC__stream_encoder_set_channels(_encoder, profile->channels()))
    {
       THROW_EXCEPTION(AudioEncoderException, "ERROR: could not set channel count");
       return;
    }
 
-   if (not FLAC__stream_encoder_set_sample_rate(_encoder, settings->sample_rate()))
+   if (not FLAC__stream_encoder_set_sample_rate(_encoder, profile->sample_rate()))
    {
       THROW_EXCEPTION(AudioEncoderException, "ERROR: could not set sample rate");
       return;
    }
 
-   if (not FLAC__stream_encoder_set_bits_per_sample(_encoder, settings->bits_per_sample()))
+   if (not FLAC__stream_encoder_set_bits_per_sample(_encoder, profile->bits_per_sample()))
    {
       THROW_EXCEPTION(AudioEncoderException, "ERROR: could not set sample width");
       return;
    }
 
-   if (not FLAC__stream_encoder_set_compression_level(_encoder, settings->quality_level()))
+   if (not FLAC__stream_encoder_set_compression_level(_encoder, profile->quality_level()))
    {
       THROW_EXCEPTION(AudioEncoderException, "ERROR: could not set compression level");
       return;
@@ -140,7 +140,7 @@ int32_t FlacAudioEncoder::encode(int8_t* data,  uint32_t len)
 
       // convert the packed little-endian 16-bit PCM samples into an 
       // interleaved FLAC__int32 buffer for libFLAC
-      for (int i = 0; i < samples * channels; i++)
+      for (int i = 0; i < samples; i++)
       { 
          // inefficient but simple and works on big- or little-endian machines.
          buffer[i] = (FLAC__int32)(((FLAC__int16)(FLAC__int8)data[2 * i + 1] << 8) | (FLAC__int16)data[2 * i]);

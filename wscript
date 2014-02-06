@@ -38,6 +38,7 @@ audio_sources = ['lib/audio/Cdda.cpp',
                  'lib/audio/AudioEncoderException.cpp',
                  'lib/audio/AudioEncoder.cpp',
                  'lib/audio/AudioDuration.cpp',
+                 'lib/audio/AudioTranscoder.cpp',
                  'lib/audio/encoders/FlacAudioEncoder.cpp',
                  'lib/audio/encoders/WavAudioEncoder.cpp',
 #                 'lib/audio/encoders/OggVorbisAudioEncoder.cpp',
@@ -351,6 +352,15 @@ def build(bld):
           target       = 'track-read',
           features     = 'cxx cprogram',
           source       = ['examples/track-read.cpp'],
+          includes     = ['.', 'examples/', 'lib/'],
+          use          = ['Audio', 'LIBORION'],
+          lib          = 'c++' if is_darwin else '',
+          install_path = None)
+
+      bld.program(
+          target       = 'transcode',
+          features     = 'cxx cprogram',
+          source       = ['examples/transcode.cpp'],
           includes     = ['.', 'examples/', 'lib/'],
           use          = ['Audio', 'LIBORION'],
           lib          = 'c++' if is_darwin else '',
