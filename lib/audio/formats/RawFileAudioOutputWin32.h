@@ -55,6 +55,10 @@ public:
 
     virtual bool close();
 
+    virtual uint64_t position();
+
+    virtual uint64_t position(int64_t offset);
+
 private:
     HANDLE _file_handle;
 

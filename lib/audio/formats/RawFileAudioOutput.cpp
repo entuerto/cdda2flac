@@ -90,4 +90,16 @@ bool RawFileAudioOutput::close()
    return std::fclose(_file_handle) == 0;
 }
 
+uint64_t RawFileAudioOutput::position()
+{
+   return std::ftell(_file_handle);
+}
+
+uint64_t RawFileAudioOutput::position(int64_t offset)
+{
+   if (std::fseek(_file_handle, offset, SEEK_SET) == 0)
+      return position();
+
+   return 0;
+}
 } // end of name space

@@ -28,13 +28,31 @@
 
 namespace audio
 {
-static const int SAMPLES_BUF_SIZE = 1024 * 2;
+static const int SAMPLES_BUF_SIZE = FLAC__MAX_BLOCK_SIZE * 2;
 
-static FLAC__StreamEncoderWriteStatus write_callback(const FLAC__StreamEncoder *, const FLAC__byte buffer[], size_t bytes, unsigned samples, unsigned currentFrame, void* clientData)
+static FLAC__StreamEncoderSeekStatus seek_callback(const FLAC__StreamEncoder*, FLAC__uint64 absoluteByteOffset, void* clientData)
 {
    FlacAudioEncoder* flac_encoder = static_cast<FlacAudioEncoder*>(clientData);
 
-   int32_t result = flac_encoder->write_to_output(const_cast<FLAC__byte*>(buffer), static_cast<uint32_t>(bytes));
+   flac_encoder->seek(absoluteByteOffset);
+
+   return FLAC__STREAM_ENCODER_SEEK_STATUS_OK;
+}
+
+static FLAC__StreamEncoderTellStatus tell_callback(const FLAC__StreamEncoder*, FLAC__uint64* absoluteByteOffset, void* clientData)
+{
+   FlacAudioEncoder* flac_encoder = static_cast<FlacAudioEncoder*>(clientData);
+
+   *absoluteByteOffset = flac_encoder->tell();
+
+   return FLAC__STREAM_ENCODER_TELL_STATUS_OK;
+}
+
+static FLAC__StreamEncoderWriteStatus write_callback(const FLAC__StreamEncoder*, const FLAC__byte buffer[], size_t bytes, unsigned samples, unsigned currentFrame, void* clientData)
+{
+   FlacAudioEncoder* flac_encoder = static_cast<FlacAudioEncoder*>(clientData);
+
+   int32_t result = flac_encoder->write_to_output(buffer, static_cast<uint32_t>(bytes));
 
    if (result == static_cast<ssize_t>(bytes))
       return FLAC__STREAM_ENCODER_WRITE_STATUS_OK;
@@ -54,6 +72,8 @@ FlacAudioEncoder::FlacAudioEncoder(AudioOutput::SharedPtr out) :
    _profile(nullptr),
    _encoder(nullptr)
 {
+   _metadata[0] = nullptr;
+   _metadata[1] = nullptr;
 }
 
 /*
@@ -72,7 +92,7 @@ std::string FlacAudioEncoder::type() const
 
 /*
  */
-void FlacAudioEncoder::setup(AudioEncoderProfile::SharedPtr profile, AudioMetaData::SharedPtr /* metadata */, uint32_t data_size)
+void FlacAudioEncoder::setup(AudioEncoderProfile::SharedPtr profile, AudioMetaData::SharedPtr metadata, uint32_t data_size)
 {
    _profile = profile;
 
@@ -112,10 +132,12 @@ void FlacAudioEncoder::setup(AudioEncoderProfile::SharedPtr profile, AudioMetaDa
    FLAC__stream_encoder_set_verify(_encoder, true);
    //FLAC__stream_encoder_set_total_samples_estimate(encoder, total_samples);
 
+   set_tags(metadata);
+
    FLAC__StreamEncoderInitStatus init_status = FLAC__stream_encoder_init_stream(_encoder,
                                                                                 write_callback,
-                                                                                nullptr,
-                                                                                nullptr,
+                                                                                seek_callback,
+                                                                                tell_callback,
                                                                                 nullptr,
 		                                                                this);
    if (init_status != FLAC__STREAM_ENCODER_INIT_STATUS_OK) 
@@ -140,18 +162,17 @@ int32_t FlacAudioEncoder::encode(int8_t* data,  uint32_t len)
 
       // convert the packed little-endian 16-bit PCM samples into an 
       // interleaved FLAC__int32 buffer for libFLAC
-      for (int i = 0; i < samples; i++)
-      { 
-         // inefficient but simple and works on big- or little-endian machines.
-         buffer[i] = (FLAC__int32)(((FLAC__int16)(FLAC__int8)data[2 * i + 1] << 8) | (FLAC__int16)data[2 * i]);
-      }
+      const int16_t *src = reinterpret_cast<int16_t*>(data);
+      for (uint32_t i = 0; i < samples; i++)
+         for (int c = 0; c < 2; c++)
+	    buffer[2 * i + c] = src[2 * i + c];
 
       // feed samples to encoder
       if (not FLAC__stream_encoder_process_interleaved(_encoder, buffer, samples / 2))
       {
          THROW_EXCEPTION(AudioEncoderException, "ERROR: FLAC__stream_encoder_process_interleaved error");
       }
-      
+            
       left_samples -= samples;
       data += samples * 2; // skip processed samples      
    }
@@ -168,6 +189,9 @@ void FlacAudioEncoder::tear_down()
       THROW_EXCEPTION(AudioEncoderException, "ERROR: could not finish encoding");
    }
 
+   FLAC__metadata_object_delete(_metadata[0]);
+   FLAC__metadata_object_delete(_metadata[1]);
+
    if (_encoder)
    {
       FLAC__stream_encoder_delete(_encoder);
@@ -177,9 +201,54 @@ void FlacAudioEncoder::tear_down()
 
 /*
  */
-int32_t FlacAudioEncoder::write_to_output(uint8_t* buffer, uint32_t len)
+void FlacAudioEncoder::set_tags(AudioMetaData::SharedPtr metadata)
+{
+   _metadata[0] = FLAC__metadata_object_new(FLAC__METADATA_TYPE_VORBIS_COMMENT);
+   _metadata[1] = FLAC__metadata_object_new(FLAC__METADATA_TYPE_PADDING);
+
+   set_tag_value(_metadata[0], "TITLE", metadata->title());
+   set_tag_value(_metadata[0], "TRACKNUMBER", metadata->track_number());
+   set_tag_value(_metadata[0], "ARTIST", metadata->artist());
+   set_tag_value(_metadata[0], "ALBUM", metadata->album());
+   set_tag_value(_metadata[0], "ALBUMARTIST", metadata->artist());
+   set_tag_value(_metadata[0], "GENRE", metadata->genre());
+   set_tag_value(_metadata[0], "DATE", metadata->date());
+   set_tag_value(_metadata[0], "COMMENT", metadata->comment());
+
+   _metadata[1]->length = 4096;
+   FLAC__stream_encoder_set_metadata(_encoder, _metadata, 2);
+
+}
+
+/*
+ */
+bool FlacAudioEncoder::set_tag_value(FLAC__StreamMetadata* metadata, const std::string& key, const std::string& value)
+{
+   FLAC__StreamMetadata_VorbisComment_Entry entry;
+
+   return FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair(&entry, key.c_str(), value.c_str()) and
+          FLAC__metadata_object_vorbiscomment_append_comment(metadata, entry, false);
+}
+
+/*
+ */
+int32_t FlacAudioEncoder::write_to_output(const uint8_t* buffer, uint32_t len)
 {
    return _output->write(buffer, len);
+}
+
+/*
+ */
+uint64_t FlacAudioEncoder::seek(int64_t offset)
+{
+   return _output->position(offset);
+}
+
+/*
+ */
+uint64_t FlacAudioEncoder::tell()
+{
+   return _output->position();
 }
 
 } // end of namespace

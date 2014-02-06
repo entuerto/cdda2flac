@@ -72,13 +72,17 @@ void AudioTranscoder::transcode_file(const std::string& file_name, AudioEncoderP
 
       encoder->setup(profile, metadata, 1000000);
 
-      int8_t read_buffer[1024];
+      int8_t read_buffer[4096];
 
-      DWORD bytes_read = 0;
-      while (ReadFile(file_handle, read_buffer, 1024, &bytes_read, NULL)) 
+      DWORD bytes_read = 0;      
+      do
       {
+         if (not ReadFile(file_handle, read_buffer, 4096, &bytes_read, NULL))
+            break;
+
          encoder->encode(read_buffer, bytes_read);
       }
+      while (bytes_read != 0);
       
       encoder->tear_down();
 

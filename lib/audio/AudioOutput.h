@@ -55,6 +55,10 @@ public:
    //! Close the audio stream
    virtual bool close() =0;
 
+   virtual uint64_t position() =0;
+
+   virtual uint64_t position(int64_t offset) =0;
+
    static SharedPtr create(const std::string& format);
 
 protected:

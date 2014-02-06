@@ -50,13 +50,21 @@ public:
 
    virtual void tear_down();
 
-   int32_t write_to_output(uint8_t* buffer, uint32_t len);
+   int32_t write_to_output(const uint8_t* buffer, uint32_t len);
+   uint64_t seek(int64_t offset);
+   uint64_t tell();
+
+
+protected:
+   void set_tags(AudioMetaData::SharedPtr metadata);
+   bool set_tag_value(FLAC__StreamMetadata* metadata, const std::string& key, const std::string& value); 
 
 private:
    AudioOutput::SharedPtr _output;
    AudioEncoderProfile::SharedPtr _profile;
 
    FLAC__StreamEncoder* _encoder;
+   FLAC__StreamMetadata* _metadata[2];
 
 };
 

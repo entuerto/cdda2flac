@@ -53,6 +53,10 @@ public:
 
     virtual bool close();
 
+    virtual uint64_t position();
+
+    virtual uint64_t position(int64_t offset);
+
 private:
     FILE*  _file_handle;
     bool   _is_open;

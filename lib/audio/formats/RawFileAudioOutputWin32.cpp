@@ -79,6 +79,7 @@ int32_t RawFileAudioOutput::write(const uint8_t* buffer, uint32_t len)
  */
 void RawFileAudioOutput::flush()
 {
+   FlushFileBuffers(_file_handle);
 }
 
 /*
@@ -86,9 +87,21 @@ void RawFileAudioOutput::flush()
  */
 bool RawFileAudioOutput::close()
 {
+   flush();
+
    bool ret = CloseHandle(_file_handle);
    _file_handle = NULL;
    return ret;
+}
+
+uint64_t RawFileAudioOutput::position()
+{
+   return SetFilePointer(_file_handle, 0, 0, FILE_CURRENT);
+}
+
+uint64_t RawFileAudioOutput::position(int64_t offset)
+{
+   return SetFilePointer(_file_handle, offset, 0, FILE_BEGIN);
 }
 
 } // end of name space
