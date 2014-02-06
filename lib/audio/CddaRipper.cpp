@@ -51,7 +51,7 @@ void CddaRipper::rip_track(CddaTrack* track, AudioEncoderProfile::SharedPtr prof
    try 
    {
       AudioReader::SharedPtr  reader  = AudioReader::create(_cd, "raw");
-      AudioOutput::SharedPtr  output  = AudioOutput::create("raw");
+      AudioOutput::SharedPtr  output  = AudioOutput::create("file");
       AudioEncoder::SharedPtr encoder = AudioEncoder::create(profile->encoder(), output);
 
       output->open("track1." + profile->encoder());
@@ -88,7 +88,7 @@ void CddaRipper::rip_disk(AudioEncoderProfile::SharedPtr profile)
 /*
    try 
    {
-      AudioOutput::SharedPtr output  = AudioOutput::create("raw");
+      AudioOutput::SharedPtr output  = AudioOutput::create("file");
       AudioReader::SharedPtr reader  = AudioReader::create(cd, "raw");
 
 

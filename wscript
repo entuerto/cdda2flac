@@ -290,11 +290,11 @@ def build(bld):
    is_darwin = _target_is_darwin(bld)
 
    if is_win32:
-      audio_sources.append('lib/audio/formats/RawFileAudioOutputWin32.cpp')
+      audio_sources.append('lib/audio/formats/FileAudioOutput-Win32.cpp')
    elif is_darwin:
-      audio_sources.append('lib/audio/formats/RawFileAudioOutput.cpp')
+      audio_sources.append('lib/audio/formats/FileAudioOutput.cpp')
    else:
-      audio_sources.append('lib/audio/formats/RawFileAudioOutput.cpp')
+      audio_sources.append('lib/audio/formats/FileAudioOutput.cpp')
    
 
    obj = bld.shlib(target    = 'Audio',

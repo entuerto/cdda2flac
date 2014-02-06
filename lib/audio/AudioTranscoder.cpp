@@ -61,7 +61,7 @@ void AudioTranscoder::transcode_file(const std::string& file_name, AudioEncoderP
 
    try 
    {
-      AudioOutput::SharedPtr  output  = AudioOutput::create("raw");
+      AudioOutput::SharedPtr  output  = AudioOutput::create("file");
       AudioEncoder::SharedPtr encoder = AudioEncoder::create(profile->encoder(), output);
 
       output->open("file1." + profile->encoder());

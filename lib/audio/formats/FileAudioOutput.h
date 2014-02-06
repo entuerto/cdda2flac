@@ -1,4 +1,4 @@
-// RawFileAudioOutput.h
+// FileAudioOutput.h
 //
 // Copyright 2009 Tomas <Tomas@JUANITO>
 //
@@ -17,11 +17,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA 02110-1301, USA.
 
-#ifndef AUDIO_RAWFILEAUDIOOUTPUT_H
-#define AUDIO_RAWFILEAUDIOOUTPUT_H
-
-//include files
-#include <cstdio>
+#ifndef AUDIO_FILEAUDIOOUTPUT_H
+#define AUDIO_FILEAUDIOOUTPUT_H
 
 #include <orion/NonCopyable.h>
 #include <audio/AudioOutput.h>
@@ -29,19 +26,17 @@
 namespace audio
 {
 
-//! An audio output stream
+//! An audio file output stream
 /*!
-    Base class to create audio output streams.
-
-    At the moment it output to a file.
+    Base class to create audio file output streams.
  */
-class RawFileAudioOutput :
+class FileAudioOutput :
    public AudioOutput,
    orion::NonCopyable
 {
 public:
-    RawFileAudioOutput();           // default constructor
-    virtual ~RawFileAudioOutput();  // destructor
+    FileAudioOutput();           // default constructor
+    virtual ~FileAudioOutput();  // destructor
 
     virtual bool is_open() const;
 
@@ -58,9 +53,8 @@ public:
     virtual uint64_t position(int64_t offset);
 
 private:
-    FILE*  _file_handle;
-    bool   _is_open;
-
+    struct Private;
+    Private* _impl;
 };
 
 }

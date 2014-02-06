@@ -19,11 +19,7 @@
 
 #include <audio/AudioOutput.h>
 
-#ifdef WIN32
-   #include <audio/formats/RawFileAudioOutputWin32.h>
-#else
-   #include <audio/formats/RawFileAudioOutput.h>
-#endif
+#include <audio/formats/FileAudioOutput.h>
 
 namespace audio
 {
@@ -47,9 +43,9 @@ AudioOutput::~AudioOutput()
  */
 AudioOutput::SharedPtr AudioOutput::create(const std::string& format)
 {
-   if ("wav" == format or "raw" == format) 
+   if ("wav" == format or "file" == format) 
    {
-      return AudioOutput::SharedPtr(new RawFileAudioOutput);
+      return AudioOutput::SharedPtr(new FileAudioOutput);
    }
    return AudioOutput::SharedPtr(NULL);
 }

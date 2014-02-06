@@ -1,4 +1,4 @@
-// RawFileRawFileAudioOutput.cpp
+// FileAudioOutput.cpp
 //
 // Copyright 2009 Tomas <Tomas@JUANITO>
 //
@@ -17,50 +17,61 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA 02110-1301, USA.
 
-#include <audio/formats/RawFileAudioOutput.h>
+#include <audio/formats/FileAudioOutput.h>
 
 #include <sys/fcntl.h>
+#include <cstdio>
 
 namespace audio
 {
+struct FileAudioOutput::Private
+{
+   FILE*  _file_handle;
+   bool   _is_open;
+};
+
+
 
 /*
-    Creates a new instance of the <code>RawFileAudioOutput</code> class.
+    Creates a new instance of the <code>FileAudioOutput</code> class.
  */
-RawFileAudioOutput::RawFileAudioOutput() :
-   _file_handle(0),
-   _is_open(false)
+FileAudioOutput::FileAudioOutput() :
+   _impl(new Private)
 {
+   _impl->_file_handle = 0;
+   _impl->_is_open = false;
 }
 
 /*
     Free allocated resources.
  */
-RawFileAudioOutput::~RawFileAudioOutput()
+FileAudioOutput::~FileAudioOutput()
 {
    close();
+
+   delete _impl;
 }
 
 /*
  */
-bool RawFileAudioOutput::is_open() const
+bool FileAudioOutput::is_open() const
 {
-   return _is_open;
+   return _impl->__is_open;
 }
 
 /*
     Opens the specific file and creates it.
     \param fileName File to open an create if it does not exist
  */
-bool RawFileAudioOutput::open(const std::string& name)
+bool FileAudioOutput::open(const std::string& name)
 {
-   _file_handle = std::fopen(name.c_str(), "w");
+   _impl->__file_handle = std::fopen(name.c_str(), "w");
 
-   if (_file_handle == nullptr) 
+   if (_impl->__file_handle == nullptr) 
    {
       return false;
    }
-   _is_open = true;
+   _impl->__is_open = true;
    return true;
 }
 
@@ -69,35 +80,35 @@ bool RawFileAudioOutput::open(const std::string& name)
     \param buffer audio data to write
     \param len length of the audio in bytes
  */
-int32_t RawFileAudioOutput::write(const uint8_t* buffer, uint32_t len)
+int32_t FileAudioOutput::write(const uint8_t* buffer, uint32_t len)
 {
-   return std::fwrite(buffer, sizeof(uint8_t), len, _file_handle);
+   return std::fwrite(buffer, sizeof(uint8_t), len, _impl->__file_handle);
 }
 
 /*
     Flush the stream
  */
-void RawFileAudioOutput::flush()
+void FileAudioOutput::flush()
 {
 }
 
 /*
     Close the audio stream
  */
-bool RawFileAudioOutput::close()
+bool FileAudioOutput::close()
 {
-   _is_open = false;
-   return std::fclose(_file_handle) == 0;
+   _impl->__is_open = false;
+   return std::fclose(_impl->__file_handle) == 0;
 }
 
-uint64_t RawFileAudioOutput::position()
+uint64_t FileAudioOutput::position()
 {
-   return std::ftell(_file_handle);
+   return std::ftell(_impl->__file_handle);
 }
 
-uint64_t RawFileAudioOutput::position(int64_t offset)
+uint64_t FileAudioOutput::position(int64_t offset)
 {
-   if (std::fseek(_file_handle, offset, SEEK_SET) == 0)
+   if (std::fseek(_impl->__file_handle, offset, SEEK_SET) == 0)
       return position();
 
    return 0;
