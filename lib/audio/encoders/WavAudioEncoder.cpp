@@ -93,11 +93,11 @@ void WavAudioEncoder::setup(AudioEncoderProfile::SharedPtr profile, AudioMetaDat
 
 /*
  */
-int32_t WavAudioEncoder::encode(int8_t* data,  uint32_t len)
+int32_t WavAudioEncoder::encode(const int8_t* data,  uint32_t len)
 {
    //! \todo should we check the endianess of the data.
 
-   return _output->write(reinterpret_cast<uint8_t*>(data), len);
+   return _output->write(reinterpret_cast<const uint8_t*>(data), len);
 }
 
 /*

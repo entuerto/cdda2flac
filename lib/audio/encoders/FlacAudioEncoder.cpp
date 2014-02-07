@@ -170,7 +170,7 @@ void FlacAudioEncoder::setup(AudioEncoderProfile::SharedPtr profile, AudioMetaDa
 
 /*
  */
-int32_t FlacAudioEncoder::encode(int8_t* data,  uint32_t len)
+int32_t FlacAudioEncoder::encode(const int8_t* data,  uint32_t len)
 {
    FLAC__int32 buffer[SAMPLES_BUF_SIZE];
 
@@ -183,7 +183,7 @@ int32_t FlacAudioEncoder::encode(int8_t* data,  uint32_t len)
 
       // convert the packed little-endian 16-bit PCM samples into an 
       // interleaved FLAC__int32 buffer for libFLAC
-      const int16_t *src = reinterpret_cast<int16_t*>(data);
+      const int16_t *src = reinterpret_cast<const int16_t*>(data);
       for (uint32_t i = 0; i < samples; i++)
          for (int c = 0; c < 2; c++)
 	    buffer[2 * i + c] = src[2 * i + c];

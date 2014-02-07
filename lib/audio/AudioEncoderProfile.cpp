@@ -37,9 +37,9 @@ public:
       quality_level(-1),
       audio_mode("stereo"),
       encode_method(CBR),
-      min_bitrate(-1),
-      avg_bitrate(-1),
-      max_bitrate(-1)
+      min_bitrate(128),
+      avg_bitrate(128),
+      max_bitrate(1281)
       {}
 
 public:
@@ -284,6 +284,21 @@ AudioEncoderProfile::SharedPtr AudioEncoderProfile::create(const std::string& na
    {
       profile->name("FLAC");
       profile->encoder("FLAC");
+      profile->quality_level(5);
+   }
+   else if (name == "mp3")
+   {
+      profile->name("mp3lame");
+      profile->encoder("mp3lame");
+      profile->encode_method(QVBR);
+      profile->quality_level(0);
+      profile->set_bitrates(96, 256, 256);
+   }
+   else if (name == "ogg")
+   {
+      profile->name("ogg");
+      profile->encoder("ogg");
+      profile->encode_method(QVBR);
       profile->quality_level(5);
    }
 

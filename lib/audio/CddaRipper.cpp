@@ -69,7 +69,7 @@ void CddaRipper::rip_track(CddaTrack* track, AudioEncoderProfile::SharedPtr prof
          // read a sector
          long sectors_read = reader->read(read_buffer, cursor, 1);
 
-         encoder->encode(reinterpret_cast<int8_t*>(read_buffer), sectors_read * Cdda::FRAMESIZE);
+         encoder->encode(reinterpret_cast<int8_t*>(read_buffer), sectors_read * Cdda::FRAMESIZE_RAW);
       }
       encoder->tear_down();
 

@@ -45,7 +45,7 @@ public:
 
    virtual void setup(AudioEncoderProfile::SharedPtr profile, AudioMetaData::SharedPtr metadata, uint32_t data_size);
 
-   virtual int32_t encode(int8_t* data,  uint32_t len);
+   virtual int32_t encode(const int8_t* data,  uint32_t len);
 
    virtual void tear_down();
 

@@ -19,11 +19,13 @@
 
 #include "AudioEncoder.h"
 
+#include <config.h>
 #include <audio/AudioOutput.h>
+#include <audio/AudioEncoderException.h>
 #include <audio/encoders/FlacAudioEncoder.h>
 #include <audio/encoders/WavAudioEncoder.h>
-//#include <audio/encoders/OggVorbisAudioEncoder.h>
-//#include <audio/encoders/Mp3LameAudioEncoder.h>
+#include <audio/encoders/Mp3LameAudioEncoder.h>
+#include <audio/encoders/OggVorbisAudioEncoder.h>
 
 namespace audio
 {
@@ -45,19 +47,25 @@ AudioEncoder::SharedPtr AudioEncoder::create(const std::string& encoder, AudioOu
    {
       return AudioEncoder::SharedPtr(new WavAudioEncoder(out));
    } 
+#if HAVE_FLAC
    else if (encoder == "FLAC") 
    {
       return AudioEncoder::SharedPtr(new FlacAudioEncoder(out));
    }
-//   else if (encoder == "ogg-vorbis" or encoder == "ogg") 
-//   {
-//      return AudioEncoder::SharedPtr(new OggVorbisAudioEncoder(out));
-//   }
-//   else if (encoder == "mp3-lame" or encoder == "mp3") 
-//   {
-//      return AudioEncoder::SharedPtr(new Mp3LameAudioEncoder(out));
-//   }
-   return AudioEncoder::SharedPtr();
+#endif
+#if HAVE_MP3LAME
+   else if (encoder == "mp3lame" or encoder == "mp3") 
+   {
+      return AudioEncoder::SharedPtr(new Mp3LameAudioEncoder(out));
+   }
+#endif
+#if HAVE_VORBIS
+   else if (encoder == "ogg-vorbis" or encoder == "ogg") 
+   {
+      return AudioEncoder::SharedPtr(new OggVorbisAudioEncoder(out));
+   }
+#endif
+   THROW_EXCEPTION(AudioEncoderException, "Unkwon encoder: " + encoder) 
 }
 
 } // namespace audio

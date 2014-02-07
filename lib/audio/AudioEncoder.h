@@ -52,11 +52,11 @@ public:
    /*!
        The encoder can initialize specific information for
        the audio stream that we are about to encode.
-       \param settings controls the encoders settings
+       \param profile controls the encoders profile
        \param metadata contains the tag information when encoding audio
        \param data_size size of the audio stream to encode
      */
-   virtual void setup(AudioEncoderProfile::SharedPtr settings, AudioMetaData::SharedPtr metadata, uint32_t data_size) = 0;
+   virtual void setup(AudioEncoderProfile::SharedPtr profile, AudioMetaData::SharedPtr metadata, uint32_t data_size) = 0;
 
    //! Encode some audio
    /*!
@@ -65,7 +65,7 @@ public:
        \param len length of buffer of audio data to encode
        \return the byte of encoded audio, -1 if error
      */
-   virtual int32_t encode(int8_t* data, uint32_t len) = 0;
+   virtual int32_t encode(const int8_t* data, uint32_t len) = 0;
 
    //! Cleanup the encoding process after completion
    /*!

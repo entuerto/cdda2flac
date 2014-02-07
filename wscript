@@ -42,8 +42,8 @@ audio_sources = ['lib/audio/Cdda.cpp',
                  'lib/audio/AudioTranscoder.cpp',
                  'lib/audio/encoders/FlacAudioEncoder.cpp',
                  'lib/audio/encoders/WavAudioEncoder.cpp',
-#                 'lib/audio/encoders/OggVorbisAudioEncoder.cpp',
-#                 'lib/audio/encoders/Mp3LameAudioEncoder.cpp',
+                 'lib/audio/encoders/OggVorbisAudioEncoder.cpp',
+                 'lib/audio/encoders/Mp3LameAudioEncoder.cpp',
                  'lib/audio/cdio/ParanoiaReaderImpl.cpp',
                  'lib/audio/cdio/CddaTrackImpl.cpp',
                  'lib/audio/cdio/CddaReaderImpl.cpp',
@@ -133,11 +133,11 @@ def options(opt):
                            help    = 'Specifies the path for the FLAC package.',
                            dest    = 'flac_path')
 
-#   group.add_option ('--lame-path',
-#                     action  = 'store',
-#                     default = '/usr',
-#                     help    = 'Specifies the path for the lame package.',
-#                     dest    = 'lame_path')
+   audio_group.add_option ('--lame-path',
+                           action  = 'store',
+                           default = '/usr/local' if not is_win32 else 'E:/MinGWEnv/msys/1.0/local',
+                           help    = 'Specifies the path for the lame package.',
+                           dest    = 'lame_path')
 
 
 def configure(conf):
@@ -208,8 +208,45 @@ def configure(conf):
                               libpath = os.path.join(Options.options.flac_path, 'lib'),
                               lib = 'FLAC', 
                               uselib_store = "FLAC", 
-                              define_name = 'HAVE_FLAC_H', 
+                              define_name = 'HAVE_FLAC', 
                               mandatory = True)
+                              
+   # LAME mp3 encoder
+   have_lame = conf.check_cxx(header_name = 'lame/lame.h',
+                              cxxflags = '-I' + os.path.join(Options.options.lame_path, 'include'),
+                              libpath = os.path.join(Options.options.lame_path, 'lib'),
+                              lib = 'mp3lame', 
+                              uselib_store = "mp3lame", 
+                              define_name = 'HAVE_MP3LAME', 
+                              mandatory = False)
+
+   # ogg
+   have_ogg = conf.check_cfg(package = 'ogg',
+                             atleast_version = '1.2.3',
+                             uselib_store = 'ogg',
+                             mandatory = False,
+                             args = '--cflags --libs')
+
+   # vorbis
+   have_vorbis = conf.check_cfg(package = 'vorbis',
+                                atleast_version = '1.2.3',
+                                uselib_store = 'vorbis',
+                                mandatory = False,
+                                args = '--cflags --libs')
+
+   # vorbisenc
+   have_vorbisenc = conf.check_cfg(package = 'vorbisenc',
+                                   atleast_version = '1.2.3',
+                                   uselib_store = 'vorbisenc',
+                                   mandatory = False,
+                                   args = '--cflags --libs')
+
+   # vorbisfile
+   have_vorbisfile = conf.check_cfg(package = 'vorbisfile',
+                                    atleast_version = '1.2.3',
+                                    uselib_store = 'vorbisfile',
+                                    mandatory = False,
+                                    args = '--cflags --libs')                                   
 
    # uuid
    if not is_win32:
@@ -276,6 +313,8 @@ def configure(conf):
    _print(conf, "")
    _print(conf, "  Audio Incoders:")
    _print(conf, "     flac                 : {0}".format('Yes' if have_flac else 'No'))
+   _print(conf, "     lame mp3             : {0}".format('Yes' if have_lame else 'No'))
+   _print(conf, "     ogg vorbis           : {0}".format('Yes' if have_vorbisenc else 'No'))
    _print(conf, "")
    _print(conf, "  Audio backend:")
    _print(conf, "     cdio                 : {0}".format(cdio_version))
@@ -303,14 +342,23 @@ def build(bld):
                    source    = audio_sources,
                    includes  = ['.', 'lib/'],
                    lib       = 'c++' if is_darwin else '',
-                   uselib    = ['LIBORION', 'LIBCDIO', 'LIBCDIO_CDDA', 'LIBCDIO_PARANOIA', 'FLAC'],
+                   uselib    = ['LIBORION', 
+                                'LIBCDIO', 
+                                'LIBCDIO_CDDA', 
+                                'LIBCDIO_PARANOIA', 
+                                'FLAC', 
+                                'mp3lame', 
+                                'ogg', 
+                                'vorbis', 
+                                'vorbisenc', 
+                                'vorbisfile'],
                    use       = [])
 
    obj = bld.program(target    = 'cdda2flac',
                      features  = 'cxx cprogram',
                      source    = 'src/main.cpp',
                      includes  = ['.', 'src/', 'lib/'],
-                     uselib    = ['LIBORION','flac'],
+                     uselib    = ['LIBORION'],
                      use       = ['Audio'])
 
    if is_win32:

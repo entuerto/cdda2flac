@@ -31,11 +31,6 @@
 
 namespace audio
 {
-
-class AudioOutput;
-class AudioEncoderSettings;
-class AudioMetaData;
-
 //! Audio encoder for mp3 lame
 /*!
     This is the audio encoder to create mp3 files with the lame mp3
@@ -47,28 +42,27 @@ class Mp3LameAudioEncoder :
 {
 public:
    //! Construct an mp3 audio encoder
-   Mp3LameAudioEncoder(AudioOutput* out);
+   Mp3LameAudioEncoder(AudioOutput::SharedPtr out);
 
    //! Free the audio encoder resources
    virtual ~Mp3LameAudioEncoder();
 
    virtual std::string type() const;
 
-   virtual void setup(AudioEncoderSettings* settings, AudioMetaData* metadata, uint32_t data_size);
+   virtual void setup(AudioEncoderProfile::SharedPtr profile, AudioMetaData::SharedPtr metadata, uint32_t data_size);
 
-   virtual int32_t encode(int8_t* data, uint32_t len);
+   virtual int32_t encode(const int8_t* data, uint32_t len);
 
    virtual void tear_down();
 
 protected:
-   void set_tags(AudioMetaData* metadata);
+   void set_tags(AudioMetaData::SharedPtr metadata);
 
 private:
-   AudioOutput* _output;
-   AudioEncoderSettings* _settings;
+   AudioOutput::SharedPtr _output;
+   AudioEncoderProfile::SharedPtr _profile;
 
    lame_global_flags* _gf;
-
 };
 
 }
