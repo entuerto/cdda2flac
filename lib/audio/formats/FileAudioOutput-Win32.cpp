@@ -20,6 +20,7 @@
 #include <audio/formats/FileAudioOutput.h>
 
 #include <windows.h>
+#include <audio/AudioOutputException.h>
 
 namespace audio
 {
@@ -105,12 +106,20 @@ bool FileAudioOutput::close()
 
 uint64_t FileAudioOutput::position()
 {
-   return SetFilePointer(_impl->_file_handle, 0, 0, FILE_CURRENT);
+   DWORD ret = SetFilePointer(_impl->_file_handle, 0, 0, FILE_CURRENT);
+
+   THROW_IF(ret == INVALID_SET_FILE_POINTER, AudioOutputException);
+
+   return ret;
 }
 
 uint64_t FileAudioOutput::position(int64_t offset)
 {
-   return SetFilePointer(_impl->_file_handle, offset, 0, FILE_BEGIN);
+   DWORD ret = SetFilePointer(_impl->_file_handle, offset, 0, FILE_BEGIN);
+
+   THROW_IF(ret == INVALID_SET_FILE_POINTER, AudioOutputException);
+
+   return ret;
 }
 
 } // end of name space

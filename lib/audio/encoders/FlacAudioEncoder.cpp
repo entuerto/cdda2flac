@@ -19,12 +19,17 @@
 
 #include <audio/encoders/FlacAudioEncoder.h>
 
+#include <orion/Logging.h>
 #include <audio/AudioOutput.h>
+#include <audio/AudioOutputException.h>
 #include <audio/AudioEncoderException.h>
 #include <audio/AudioEncoderProfile.h>
 #include <audio/AudioMetaData.h>
 
 #include <cdio/sector.h>
+
+using namespace orion;
+using namespace orion::logging;
 
 namespace audio
 {
@@ -34,7 +39,15 @@ static FLAC__StreamEncoderSeekStatus seek_callback(const FLAC__StreamEncoder*, F
 {
    FlacAudioEncoder* flac_encoder = static_cast<FlacAudioEncoder*>(clientData);
 
-   flac_encoder->seek(absoluteByteOffset);
+   try
+   {
+      flac_encoder->seek(absoluteByteOffset);
+   }
+   catch(AudioOutputException& aoe)
+   {
+      LOG_EXCEPTION(aoe);
+      return FLAC__STREAM_ENCODER_SEEK_STATUS_ERROR;
+   }
 
    return FLAC__STREAM_ENCODER_SEEK_STATUS_OK;
 }
@@ -42,8 +55,16 @@ static FLAC__StreamEncoderSeekStatus seek_callback(const FLAC__StreamEncoder*, F
 static FLAC__StreamEncoderTellStatus tell_callback(const FLAC__StreamEncoder*, FLAC__uint64* absoluteByteOffset, void* clientData)
 {
    FlacAudioEncoder* flac_encoder = static_cast<FlacAudioEncoder*>(clientData);
-
-   *absoluteByteOffset = flac_encoder->tell();
+   
+   try
+   {
+      *absoluteByteOffset = flac_encoder->tell();
+   }
+   catch(AudioOutputException& aoe)
+   {
+      LOG_EXCEPTION(aoe);
+      return FLAC__STREAM_ENCODER_TELL_STATUS_ERROR;
+   }
 
    return FLAC__STREAM_ENCODER_TELL_STATUS_OK;
 }

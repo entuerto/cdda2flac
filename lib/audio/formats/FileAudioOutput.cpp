@@ -20,7 +20,10 @@
 #include <audio/formats/FileAudioOutput.h>
 
 #include <sys/fcntl.h>
+#include <cerrno>
 #include <cstdio>
+
+#include <audio/AudioOutputException.h>
 
 namespace audio
 {
@@ -103,14 +106,18 @@ bool FileAudioOutput::close()
 
 uint64_t FileAudioOutput::position()
 {
-   return std::ftell(_impl->__file_handle);
+   int32_t ret = std::ftell(_impl->__file_handle);
+
+   THROW_IF3(ret == -1, AudioOutputException, std::strerror(errno));
+
+   return ret;
 }
 
 uint64_t FileAudioOutput::position(int64_t offset)
 {
-   if (std::fseek(_impl->__file_handle, offset, SEEK_SET) == 0)
-      return position();
+   if (std::fseek(_impl->__file_handle, offset, SEEK_SET) != 0)
+      THROW(AudioOutputException, std::strerror(errno));
 
-   return 0;
+   return position();
 }
 } // end of name space
